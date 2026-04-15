@@ -1041,17 +1041,25 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       </div>
                       
                       <div className="movie-detail-info fade-in-up" style={{ animationDelay: '0.1s' }}>
-                        <h1 className="movie-detail-title">{movie.title}</h1>
+                        <h2 className="movie-detail-title" style={{ fontSize: '32px', marginBottom: '16px' }}>{cleanTitle(movie.title)}</h2>
                         
-                        <div className="movie-detail-meta">
-                          <span className="meta-pill high-rating"><Star size={14} fill="#000" color="#000" /> {movieDetails[movie.id]?.imdb || movie.imdb}</span>
+                        <div className="movie-detail-meta" style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '20px' }}>
+                          <span className="meta-pill" style={{ background: '#f1c40f', color: '#000', fontWeight: '800', padding: '6px 12px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px' }}>
+                            <Star size={14} fill="#000" color="#000" /> {(movieDetails[movie.id]?.imdb || movie.imdb) !== 'N/A' ? `${movieDetails[movie.id]?.imdb || movie.imdb}/10` : 'N/A'}
+                          </span>
+                          <span className="meta-pill" style={{ border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(0,0,0,0.4)', padding: '6px 12px', borderRadius: '6px', color: '#ddd', fontSize: '14px' }}>
+                            {movieDetails[movie.id]?.year || movie.year || 'N/A'}
+                          </span>
+                          <span className="meta-pill" style={{ border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(0,0,0,0.4)', padding: '6px 12px', borderRadius: '6px', color: '#ddd', fontSize: '14px' }}>
+                            {cleanTitle(movieDetails[movie.id]?.genre || movie.genre || movie.groupId || '')}
+                          </span>
                         </div>
 
-                        <p className="movie-detail-synopsis">{movieDetails[movie.id]?.synopsis || movie.synopsis}</p>
+                        <p className="movie-detail-synopsis" style={{ fontSize: '15px', lineHeight: '1.6', color: '#e0e0e0', marginBottom: '20px' }}>{movieDetails[movie.id]?.synopsis || movie.synopsis}</p>
 
-                        <div className="movie-detail-crew">
-                          <p><strong>{tr.movieDetail.director}:</strong> <span>{movieDetails[movie.id]?.director || movie.director}</span></p>
-                          <p><strong>{tr.movieDetail.cast}:</strong> <span>{movieDetails[movie.id]?.cast || movie.cast}</span></p>
+                        <div className="movie-detail-crew" style={{ color: '#aaa', fontSize: '14px', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '25px' }}>
+                          <p style={{ margin: 0 }}><strong>{tr.movieDetail.director}:</strong> <span style={{ color: '#fff' }}>{movieDetails[movie.id]?.director || movie.director}</span></p>
+                          <p style={{ margin: 0 }}><strong>{tr.movieDetail.cast}:</strong> <span style={{ color: '#fff' }}>{movieDetails[movie.id]?.cast || movie.cast}</span></p>
                         </div>
 
                         <div className="movie-detail-actions">
@@ -1213,18 +1221,24 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                         </div>
 
                         <div className="movie-detail-info">
-                          <h2 className="movie-detail-title">{series.title}</h2>
+                          <h2 className="movie-detail-title" style={{ fontSize: '32px', marginBottom: '16px' }}>{cleanTitle(series.title)}</h2>
                           
-                          <div className="movie-detail-meta">
-                            <span className="meta-pill high-rating"><Star size={16} fill="black" /> {series.imdb}</span>
-                            <span className="meta-pill outline">{series.year}</span>
-                            <span className="meta-pill outline">{series.genre}</span>
+                          <div className="movie-detail-meta" style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '20px' }}>
+                            <span className="meta-pill" style={{ background: '#f1c40f', color: '#000', fontWeight: '800', padding: '6px 12px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px' }}>
+                              <Star size={14} fill="#000" color="#000" /> {series.imdb !== 'N/A' ? `${series.imdb}/10` : 'N/A'}
+                            </span>
+                            <span className="meta-pill" style={{ border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(0,0,0,0.4)', padding: '6px 12px', borderRadius: '6px', color: '#ddd', fontSize: '14px' }}>
+                              {series.year || 'N/A'}
+                            </span>
+                            <span className="meta-pill" style={{ border: '1px solid rgba(255,255,255,0.3)', background: 'rgba(0,0,0,0.4)', padding: '6px 12px', borderRadius: '6px', color: '#ddd', fontSize: '14px' }}>
+                              {cleanTitle(series.genre || series.groupId || '')}
+                            </span>
                           </div>
 
-                          <p className="movie-detail-synopsis">{series.synopsis}</p>
-                          <div className="movie-detail-crew">
-                            <p><strong>{tr.movieDetail.director}:</strong> <span>{series.director}</span></p>
-                            <p><strong>{tr.movieDetail.cast}:</strong> <span>{series.cast}</span></p>
+                          <p className="movie-detail-synopsis" style={{ fontSize: '15px', lineHeight: '1.6', color: '#e0e0e0', marginBottom: '20px' }}>{series.synopsis}</p>
+                          <div className="movie-detail-crew" style={{ color: '#aaa', fontSize: '14px', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '25px' }}>
+                            <p style={{ margin: 0 }}><strong>{tr.movieDetail.director}:</strong> <span style={{ color: '#fff' }}>{series.director}</span></p>
+                            <p style={{ margin: 0 }}><strong>{tr.movieDetail.cast}:</strong> <span style={{ color: '#fff' }}>{series.cast}</span></p>
                           </div>
                         </div>
                     </div>
