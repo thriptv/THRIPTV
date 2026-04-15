@@ -1,15 +1,29 @@
 export const fetchXtreamData = async (serverUrl, username, password) => {
   const baseUrl = serverUrl.replace(/\/+$/, '');
-  const authQuery = `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
 
-  console.log('Interceptando Xtream Codes API desde:', baseUrl);
+  console.log('Interceptando Xtream Codes API vía Proxy Local:', baseUrl);
   
+  const proxyFetch = async (action) => {
+    try {
+      const response = await fetch('/api/proxy/xtream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: baseUrl, username, password, action })
+      });
+      if (!response.ok) throw new Error('Error en proxy fetch');
+      return await response.json();
+    } catch (e) {
+      console.warn('Fallo en petición:', action, e);
+      return [];
+    }
+  };
+
   try {
-    // 1. Obtenemos diccionarios de categorías para mapear nombres bonitos
+    // 1. Obtenemos diccionarios de categorías
     const [liveCat, vodCat, seriesCat] = await Promise.all([
-      fetch(`${baseUrl}/player_api.php?${authQuery}&action=get_live_categories`).then(r => r.json()).catch(() => []),
-      fetch(`${baseUrl}/player_api.php?${authQuery}&action=get_vod_categories`).then(r => r.json()).catch(() => []),
-      fetch(`${baseUrl}/player_api.php?${authQuery}&action=get_series_categories`).then(r => r.json()).catch(() => [])
+      proxyFetch('get_live_categories'),
+      proxyFetch('get_vod_categories'),
+      proxyFetch('get_series_categories')
     ]);
 
     const catMap = {};
@@ -24,9 +38,9 @@ export const fetchXtreamData = async (serverUrl, username, password) => {
 
     // 2. Fetch masivo de streams
     const [liveRaw, vodRaw, seriesRaw] = await Promise.all([
-      fetch(`${baseUrl}/player_api.php?${authQuery}&action=get_live_streams`).then(r => r.json()).catch(() => []),
-      fetch(`${baseUrl}/player_api.php?${authQuery}&action=get_vod_streams`).then(r => r.json()).catch(() => []),
-      fetch(`${baseUrl}/player_api.php?${authQuery}&action=get_series`).then(r => r.json()).catch(() => [])
+      proxyFetch('get_live_streams'),
+      proxyFetch('get_vod_streams'),
+      proxyFetch('get_series')
     ]);
 
     // 3. Traducimos al estándar del Dashboard
@@ -66,11 +80,10 @@ export const fetchXtreamData = async (serverUrl, username, password) => {
       cast: 'Desconocido',
       genre: catMap[s.category_id] || 'Series',
       synopsis: s.name,
-      // La API v2 necesita otro fetch individual por ID para sacar capítulos, por ahora armamos array seguro:
       seasons: [{ seasonNumber: 1, episodes: [{ episodeNumber: 1, title: s.name, duration: 'N/A', url: '#' }] }]
     }));
     
-    // Extracción de categorías unificadas que el Layout pintará en las píldoras superiores
+    // Extracción de categorías unificadas
     const categoriesSet = new Set([
       ...channels.map(c => c.groupId),
       ...movies.map(m => m.groupId),
@@ -82,6 +95,6 @@ export const fetchXtreamData = async (serverUrl, username, password) => {
 
   } catch (error) {
     console.error("Fallo maestro conectando a Xtream Codes:", error);
-    throw new Error('No se pudo establecer conexión con el proveedor. Intenta comprobar CORS si estás en desarrollo web.');
+    throw new Error('No se pudo procesar la respuesta del servidor Proxy.');
   }
 };
