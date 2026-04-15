@@ -314,6 +314,32 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
   // MOTORES DE RESCATE IMDB
   const [activeSearchIMDB, setActiveSearchIMDB] = useState({});
   const [fixedPosters, setFixedPosters] = useState({});
+  
+  // METADATOS EXTRAÍDOS DE IMDB/OMDB
+  const [movieDetails, setMovieDetails] = useState({});
+  useEffect(() => {
+    if (selectedMovieId && !movieDetails[selectedMovieId]) {
+      const m = MOCK_MOVIES.find(x => x.id === selectedMovieId);
+      if (m && m.title) {
+        fetch(`https://www.omdbapi.com/?apikey=trilogy&t=${encodeURIComponent(m.title)}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.Response === 'True') {
+              setMovieDetails(prev => ({
+                ...prev,
+                [selectedMovieId]: {
+                  director: data.Director !== 'N/A' ? data.Director : m.director,
+                  cast: data.Actors !== 'N/A' ? data.Actors : m.cast,
+                  synopsis: data.Plot !== 'N/A' ? data.Plot : m.synopsis,
+                  imdb: data.imdbRating !== 'N/A' ? data.imdbRating : m.imdb
+                }
+              }));
+            }
+          })
+          .catch(() => {});
+      }
+    }
+  }, [selectedMovieId]);
 
   // MOTORES DE MEMORIA (FAVORITOS E HISTORIAL COMPARTIDO)
   const [favorites, setFavorites] = useState([]); 
@@ -989,40 +1015,21 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                         <h1 className="movie-detail-title">{movie.title}</h1>
                         
                         <div className="movie-detail-meta">
-                          <span className="meta-pill high-rating"><Star size={14} fill="#000" color="#000" /> {movie.imdb}</span>
-                          <span className="meta-pill"><Calendar size={14} /> {movie.year}</span>
-                          <span className="meta-pill"><Clock size={14} /> {movie.duration}</span>
-                          <span className="meta-pill outline">{movie.genre}</span>
+                          <span className="meta-pill high-rating"><Star size={14} fill="#000" color="#000" /> {movieDetails[movie.id]?.imdb || movie.imdb}</span>
                         </div>
 
-                        <p className="movie-detail-synopsis">{movie.synopsis}</p>
+                        <p className="movie-detail-synopsis">{movieDetails[movie.id]?.synopsis || movie.synopsis}</p>
 
                         <div className="movie-detail-crew">
-                          <p><strong>{tr.movieDetail.director}:</strong> <span>{movie.director}</span></p>
-                          <p><strong>{tr.movieDetail.cast}:</strong> <span>{movie.cast}</span></p>
+                          <p><strong>{tr.movieDetail.director}:</strong> <span>{movieDetails[movie.id]?.director || movie.director}</span></p>
+                          <p><strong>{tr.movieDetail.cast}:</strong> <span>{movieDetails[movie.id]?.cast || movie.cast}</span></p>
                         </div>
 
                         <div className="movie-detail-actions">
                           <button className="btn-play-movie" onClick={() => setPlayingMedia(movie)}>
-                            <Play size={20} fill="currentColor" /> {tr.common.play}
+                             <Play size={20} fill="currentColor" /> {tr.common.play}
                           </button>
                         </div>
-                      </div>
-                    </div>
-
-                    {/* Títulos Similares */}
-                    <div className="similar-movies-section">
-                      <h3 className="similar-movies-title">{tr.movieDetail.similarMovies}</h3>
-                      <div className="similar-movies-list scroll-area-x">
-                        {MOCK_MOVIES.filter(m => m.id !== movie.id && (m.genre.includes(movie.genre.split(',')[0]) || m.groupId === movie.groupId)).slice(0, 6).map(sim => (
-                          <div key={sim.id} className="similar-movie-card" onClick={() => {
-                            setSelectedMovieId(sim.id);
-                            document.querySelector('.movie-detail-content').scrollTop = 0;
-                          }}>
-                            <img src={sim.poster} alt={sim.title} onError={(e) => e.target.style.display='none'} />
-                            <span className="similar-movie-title">{sim.title}</span>
-                          </div>
-                        ))}
                       </div>
                     </div>
 
