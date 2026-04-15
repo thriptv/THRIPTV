@@ -590,11 +590,11 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                 <div className="similar-movies-list scroll-area-x" ref={homeMoviesRef} style={{ scrollBehavior: 'smooth' }}>
                   {(() => {
                     const sorted = [...MOCK_MOVIES].sort((a,b) => {
+                      const yearDiff = (Number(b.year) || 0) - (Number(a.year) || 0);
+                      if (yearDiff !== 0) return yearDiff;
                       const imdbA = Number(a.imdb) || 0;
                       const imdbB = Number(b.imdb) || 0;
-                      const imdbDiff = imdbB - imdbA;
-                      if (imdbDiff !== 0) return imdbDiff;
-                      return (Number(b.year) || 0) - (Number(a.year) || 0);
+                      return imdbB - imdbA;
                     });
                     return [...sorted, ...sorted, ...sorted].slice(0, 20);
                   })().map((movie, idx) => {
@@ -668,11 +668,11 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                 <div className="similar-movies-list scroll-area-x" ref={homeSeriesRef} style={{ scrollBehavior: 'smooth' }}>
                   {(() => {
                     const sorted = [...MOCK_SERIES].sort((a,b) => {
+                      const yearDiff = (Number(b.year) || 0) - (Number(a.year) || 0);
+                      if (yearDiff !== 0) return yearDiff;
                       const imdbA = Number(a.imdb) || 0;
                       const imdbB = Number(b.imdb) || 0;
-                      const imdbDiff = imdbB - imdbA;
-                      if (imdbDiff !== 0) return imdbDiff;
-                      return (Number(b.year) || 0) - (Number(a.year) || 0);
+                      return imdbB - imdbA;
                     });
                     return [...sorted, ...sorted, ...sorted].slice(0, 20);
                   })().map((series, idx) => {
