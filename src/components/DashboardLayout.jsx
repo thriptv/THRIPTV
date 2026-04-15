@@ -406,8 +406,14 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
     
     if (activeBottomNav === 'movies') {
       setSelectedMovieId(itemId);
+    } else if (activeBottomNav === 'series') {
+      setSelectedSeriesId(itemId);
     } else {
-      // Aquí a futuro abriremos el reproductor (Live TV)
+      // Live TV u otros: lanzamos directamente el reproductor
+      const channelObj = MOCK_CHANNELS.find(c => c.id === itemId);
+      if (channelObj) {
+        setPlayingMedia(channelObj);
+      }
     }
   };
 
