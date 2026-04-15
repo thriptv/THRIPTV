@@ -592,11 +592,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       <p>Sincronizando horarios en tiempo real...</p>
                     </div>
                   ) : (
-                    liveSchedule.filter(match => {
-                      if (!match.tournament) return true;
-                      const t = match.tournament.toLowerCase();
-                      return t.includes('la liga') || t.includes('champion') || t.includes('uefa') || t.includes('premier') || t.includes('ingles') || t.includes('europa');
-                    }).map((match, idx) => {
+                    liveSchedule.map((match, idx) => {
                       const [t1, t2] = match.title.split(' vs ');
                       return (
                         <div key={match.id} className="sports-match-row" onClick={() => setSelectedMatchId(match.id)}>
