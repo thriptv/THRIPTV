@@ -321,7 +321,14 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
     if (selectedMovieId && !movieDetails[selectedMovieId]) {
       const m = MOCK_MOVIES.find(x => x.id === selectedMovieId);
       if (m && m.title) {
-        fetch(`https://www.omdbapi.com/?apikey=trilogy&t=${encodeURIComponent(m.title)}`)
+        // Limpiamos los títulos traídos desde las plataformas IPTV (ej: "ESP: Título (2023) [HD]") p/ OMDB
+        let cleanTitle = m.title;
+        if (cleanTitle.includes(': ')) {
+          cleanTitle = cleanTitle.substring(cleanTitle.indexOf(': ') + 2);
+        }
+        cleanTitle = cleanTitle.replace(/[\(\[].*?[\)\]]/g, '').trim();
+
+        fetch(`https://www.omdbapi.com/?apikey=trilogy&t=${encodeURIComponent(cleanTitle)}`)
           .then(res => res.json())
           .then(data => {
             if (data.Response === 'True') {
@@ -334,6 +341,9 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                   imdb: data.imdbRating !== 'N/A' ? data.imdbRating : m.imdb
                 }
               }));
+            } else {
+              // Intento Fallback con t= exact match por si la limpieza falló o no existe
+              console.log("No encontrado limpio en OMDb:", cleanTitle);
             }
           })
           .catch(() => {});
@@ -970,8 +980,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           }}
                         />
                         <div className="movie-poster-fallback large" style={{ display: 'none' }}>
-                          <ImageIcon size={48} color="#444" style={{ marginBottom: '8px' }} />
-                          <span>{movie.title}</span>
+                          <ImageIcon size={64} color="#444" />
                         </div>
                       </div>
                       
