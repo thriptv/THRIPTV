@@ -1025,7 +1025,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
 
             {/* Píldoras de Filtros Rápido de Género */}
             <div className="genre-pills-container" style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '10px' }}>
-              {[tr.common.all, tr.common.action, tr.common.drama, tr.common.thriller, tr.common.comedy, tr.common.crime, tr.common.romance, tr.common.terror].map(genre => (
+              {[tr.common.all, tr.common.action, tr.common.drama, tr.common.comedy, tr.common.crime, tr.common.romance, tr.common.terror].map(genre => (
                 <button 
                   key={genre} 
                   className={`genre-pill ${activeGenre === genre ? 'active' : ''}`}
@@ -1222,7 +1222,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
 
 
             <div className="genre-pills-container" style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '10px' }}>
-              {[tr.common.all, tr.common.action, tr.common.drama, tr.common.thriller, tr.common.comedy, tr.common.crime, tr.common.romance, tr.common.terror].map(genre => (
+              {[tr.common.all, tr.common.action, tr.common.drama, tr.common.comedy, tr.common.crime, tr.common.romance, tr.common.terror].map(genre => (
                 <button 
                   key={genre}
                   className={`genre-pill ${activeGenre === genre ? 'active' : ''}`}
