@@ -769,46 +769,71 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                         <h3 style={{ marginBottom: '20px', fontSize: '22px', fontWeight: '500', color: '#fff' }}>{tr.movieDetail.whereToWatch}</h3>
                         
                         <div className="channels-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
-                          {(match.channelsList && match.channelsList.length > 0 ? match.channelsList : ["Canales locales"]).flatMap((channelText, cIdx) => {
-                            const cName = typeof channelText === "string" ? channelText : (channelText.name || channelText);
-                            const searchName = cName.replace('M+', 'Movistar').replace(' HD', '').toLowerCase();
+                          {(() => {
+                            const [t1Name, t2Name] = match.title.split(' vs ').map(t => t?.trim().toLowerCase() || '');
                             
-                            const matchesInIptv = playlistData?.channels?.filter(ch => ch.name.toLowerCase().includes(searchName)) || [];
+                            // 1. Encontrar por EPG
+                            const epgMatches = (playlistData?.channels || []).filter(ch => {
+                              if (!ch.epg || ch.epg === 'En Directo') return false;
+                              const epgLower = ch.epg.toLowerCase();
+                              const match1 = t1Name && t1Name.length >= 3 && epgLower.includes(t1Name);
+                              const match2 = t2Name && t2Name.length >= 3 && epgLower.includes(t2Name);
+                              return match1 || match2;
+                            });
+
+                            // 2. Encontrar por Nombre de Canal
+                            const nameMatches = [];
+                            const notFoundChannels = [];
                             
-                            if (matchesInIptv.length > 0) {
-                              return matchesInIptv.map(realCh => {
-                                const isFav = favorites.includes(realCh.id);
-                                return (
-                                  <div key={realCh.id} className="channel-card" onClick={() => setPlayingMedia(realCh)}>
+                            (match.channelsList && match.channelsList.length > 0 ? match.channelsList : ["Canales locales"]).forEach((channelText, cIdx) => {
+                              const cName = typeof channelText === "string" ? channelText : (channelText.name || channelText);
+                              const searchName = cName.replace('M+', 'Movistar').replace(' HD', '').toLowerCase();
+                              
+                              const found = (playlistData?.channels || []).filter(ch => ch.name.toLowerCase().includes(searchName));
+                              if (found.length > 0) {
+                                nameMatches.push(...found);
+                              } else {
+                                notFoundChannels.push(cName);
+                              }
+                            });
+
+                            const uniqueRealChannels = Array.from(new Set([...epgMatches, ...nameMatches]));
+
+                            return (
+                              <>
+                                {uniqueRealChannels.map(realCh => {
+                                  const isFav = favorites.includes(realCh.id);
+                                  return (
+                                    <div key={realCh.id} className="channel-card" onClick={() => setPlayingMedia(realCh)}>
+                                      <div className="channel-logo-box">
+                                        <img src={realCh.img || `https://api.dicebear.com/7.x/identicon/svg?seed=${realCh.name}&backgroundColor=222222`} alt={realCh.name} className="channel-logo-img" onError={(e) => { e.target.src = 'https://placehold.co/100x100/222/FFF.png?text=TV' }}/>
+                                      </div>
+                                      <div className="channel-info">
+                                        <h3 className="channel-name">{realCh.name}</h3>
+                                        <p className="channel-epg">{realCh.epg && realCh.epg !== 'En Directo' ? realCh.epg : `${match.time} - ${match.tournament}`}</p>
+                                      </div>
+                                      <div className="channel-action">
+                                        <Star size={22} className={`star-icon ${isFav ? 'favorited' : ''}`} onClick={(e) => { e.stopPropagation(); toggleFavorite(e, realCh.id); }} fill={isFav ? '#f1c40f' : 'none'} color={isFav ? '#f1c40f' : 'gray'} />
+                                        <Play size={20} className="play-button-icon" fill="currentColor" />
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                                
+                                {notFoundChannels.map((cName, idx) => (
+                                  <div key={`ch-${idx}-notfound`} className="channel-card" style={{ opacity: 0.5, cursor: 'not-allowed' }}>
                                     <div className="channel-logo-box">
-                                      <img src={realCh.img || `https://api.dicebear.com/7.x/identicon/svg?seed=${realCh.name}&backgroundColor=222222`} alt={realCh.name} className="channel-logo-img" onError={(e) => { e.target.src = 'https://placehold.co/100x100/222/FFF.png?text=TV' }}/>
+                                      <img src={`https://api.dicebear.com/7.x/identicon/svg?seed=${cName}&backgroundColor=222222`} alt={cName} className="channel-logo-img" />
                                     </div>
                                     <div className="channel-info">
-                                      <h3 className="channel-name">{realCh.name}</h3>
-                                      <p className="channel-epg">{match.time} - {match.tournament}</p>
-                                    </div>
-                                    <div className="channel-action">
-                                      <Star size={22} className={`star-icon ${isFav ? 'favorited' : ''}`} onClick={(e) => { e.stopPropagation(); toggleFavorite(e, realCh.id); }} fill={isFav ? '#f1c40f' : 'none'} color={isFav ? '#f1c40f' : 'gray'} />
-                                      <Play size={20} className="play-button-icon" fill="currentColor" />
+                                      <h3 className="channel-name">{cName}</h3>
+                                      <p className="channel-epg" style={{color: 'var(--primary-red)'}}>No disponible en tu lista</p>
                                     </div>
                                   </div>
-                                );
-                              });
-                            } else {
-                              const channelId = `ch-${cIdx}-notfound`;
-                              return (
-                                <div key={channelId} className="channel-card" style={{ opacity: 0.5, cursor: 'not-allowed' }}>
-                                  <div className="channel-logo-box">
-                                    <img src={`https://api.dicebear.com/7.x/identicon/svg?seed=${cName}&backgroundColor=222222`} alt={cName} className="channel-logo-img" />
-                                  </div>
-                                  <div className="channel-info">
-                                    <h3 className="channel-name">{cName}</h3>
-                                    <p className="channel-epg" style={{color: 'var(--primary-red)'}}>No disponible en tu lista</p>
-                                  </div>
-                                </div>
-                              );
-                            }
-                          })}
+                                ))}
+                              </>
+                            );
+                          })()}
                         </div>
                       </div>
                     </div>

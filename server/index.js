@@ -46,7 +46,7 @@ app.get('/api/sports/today', async (req, res) => {
       if (el.tagName === 'h3') {
         dayLabel = "MAÑANA";
       } else if (el.tagName === 'h4') {
-        currentTournament = $(el).text().split(' ')[0].trim() || "Competición";
+        currentTournament = $(el).text().trim().replace(/ Partidos.*/i, '') || "Competición";
       } else if ($(el).hasClass('x') || $(el).find('.x').length > 0) {
         const rows = $(el).hasClass('x') ? $(el) : $(el).find('.x');
         rows.each((j, row) => {
@@ -66,7 +66,10 @@ app.get('/api/sports/today', async (req, res) => {
            const timeMatch = $(row).text().match(/\d{2}:\d{2}/);
            if (timeMatch) timeStr = `${dayLabel} ${timeMatch[0]}`;
            
-           if(team1Name && team2Name && matches.length < 10) {
+           const topLeagues = ['CHAMPIONS', 'EUROPA', 'CONFERENCE', 'PRIMERA', 'LIGA', 'PREMIER', 'SERIE', 'BUNDESLIGA', 'LIGUE 1', 'MUNDIAL', 'EUROCOPA', 'COPA DEL REY', 'FA CUP'];
+           const isTopLeague = topLeagues.some(league => currentTournament.toUpperCase().includes(league));
+           
+           if(team1Name && team2Name && isTopLeague && matches.length < 10) {
              matches.push({
                id: `match-live-${i}-${j}`,
                sportType: 'football',
