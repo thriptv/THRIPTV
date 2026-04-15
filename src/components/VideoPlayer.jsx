@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Hls from 'hls.js';
 import { 
   Play, 
   Pause, 
@@ -36,12 +37,57 @@ const VideoPlayer = ({ media, onClose }) => {
   const [selectedSubtitle, setSelectedSubtitle] = useState('Apagado');
 
   useEffect(() => {
-    // Intentar auto-play al montar
-    if (videoRef.current) {
-      videoRef.current.play().catch(e => console.log("Autoplay prevent", e));
-      setIsPlaying(true);
+    const video = videoRef.current;
+    if (!video || !media?.url) return;
+
+    let hls;
+
+    if (Hls.isSupported() && media.url.includes('.m3u8')) {
+      hls = new Hls({
+        maxBufferLength: 30,
+        maxMaxBufferLength: 60,
+      });
+      hls.loadSource(media.url);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play().then(() => setIsPlaying(true)).catch(e => {
+            console.log("Autoplay blocked, muting...", e);
+            video.muted = true;
+            setIsMuted(true);
+            setVolume(0);
+            video.play().then(() => setIsPlaying(true)).catch(err => console.log(err));
+        });
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl') || media.url.includes('.mp4') || media.url.includes('.mkv')) {
+      // Soporte nativo de Apple Safari o Ficheros de Video Directos Web
+      video.src = media.url;
+      video.addEventListener('loadedmetadata', () => {
+        video.play().then(() => setIsPlaying(true)).catch(e => {
+            console.log("Autoplay blocked, muting...", e);
+            video.muted = true;
+            setIsMuted(true);
+            setVolume(0);
+            video.play().then(() => setIsPlaying(true)).catch(err => console.log(err));
+        });
+      });
+    } else {
+      // Fallback a nivel de navegador (.ts streams etc, algunos paneles Xtream los proxies como directos si navegador soporta streaming chunks)
+      video.src = media.url;
+      video.play().then(() => setIsPlaying(true)).catch(e => {
+            console.log("Autoplay blocked... ", e);
+            video.muted = true;
+            setIsMuted(true);
+            setVolume(0);
+            video.play().then(() => setIsPlaying(true)).catch(err => console.log(err));
+      });
     }
-  }, []);
+
+    return () => {
+      if (hls) {
+        hls.destroy();
+      }
+    };
+  }, [media]);
 
   const handleMouseMove = () => {
     setShowControls(true);
@@ -154,7 +200,6 @@ const VideoPlayer = ({ media, onClose }) => {
       <video
         ref={videoRef}
         className="video-element"
-        src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={() => setIsPlaying(false)}
