@@ -607,9 +607,10 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       const valA = (String(a.id).charCodeAt(0) + todaySeed) % 10;
                       const valB = (String(b.id).charCodeAt(0) + todaySeed) % 10;
                       if (valA !== valB) return valB - valA;
-                      const imdbA = Number(a.imdb) || 0;
-                      const imdbB = Number(b.imdb) || 0;
-                      return imdbB - imdbA;
+                      // Simulando "Popularidad" sin guiarse por la puntuación
+                      const popA = (Number(a.year) || 2000) + String(a.title).length;
+                      const popB = (Number(b.year) || 2000) + String(b.title).length;
+                      return popB - popA;
                     });
                     return sorted.slice(0, 10);
                   })().map((movie, idx) => {
@@ -703,9 +704,10 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       const valA = (String(a.id).charCodeAt(0) + todaySeed) % 10;
                       const valB = (String(b.id).charCodeAt(0) + todaySeed) % 10;
                       if (valA !== valB) return valB - valA;
-                      const imdbA = Number(a.imdb) || 0;
-                      const imdbB = Number(b.imdb) || 0;
-                      return imdbB - imdbA;
+                      // Simulando "Popularidad" sin guiarse por la puntuación
+                      const popA = (Number(a.year) || 2000) + String(a.title).length;
+                      const popB = (Number(b.year) || 2000) + String(b.title).length;
+                      return popB - popA;
                     });
                     return sorted.slice(0, 10);
                   })().map((series, idx) => {
