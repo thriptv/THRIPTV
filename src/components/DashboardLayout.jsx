@@ -262,6 +262,15 @@ const MOCK_SPORTS_AGENDA = [
   }
 ];
 
+const cleanTitle = (rawTitle) => {
+  if (!rawTitle) return '';
+  let clean = rawTitle;
+  if (clean.includes('|')) clean = clean.split('|').pop().trim();
+  if (clean.includes(' - ')) clean = clean.split(' - ').pop().trim();
+  clean = clean.replace(/\[.*?\]|\(.*?\)/g, "").trim();
+  return clean;
+};
+
 const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }) => {
   const tr = translations[appLanguage] || translations.es;
 
@@ -668,7 +677,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           </div>
 
                           <div className="title-badge-floating">
-                            <span>{movie.title}</span>
+                            <span>{cleanTitle(movie.title)}</span>
                           </div>
                           
                           <img 
@@ -761,7 +770,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           </div>
 
                           <div className="title-badge-floating">
-                            <span>{series.title}</span>
+                            <span>{cleanTitle(series.title)}</span>
                           </div>
                           
                           <img 
@@ -1106,7 +1115,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       </div>
 
                       <div className="title-badge-floating">
-                        <span>{movie.title}</span>
+                        <span>{cleanTitle(movie.title)}</span>
                       </div>
 
                       {/* Imagen Real o Rescatada de IMDb */}
@@ -1295,7 +1304,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       </div>
 
                       <div className="title-badge-floating">
-                        <span>{series.title}</span>
+                        <span>{cleanTitle(series.title)}</span>
                       </div>
                       
                       <img 
