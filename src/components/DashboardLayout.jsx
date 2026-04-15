@@ -684,7 +684,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           <div className="movie-hover-info">
                             <h4 className="movie-hover-title">{movie.title}</h4>
                             <div className="movie-hover-meta">
-                              <span className="movie-hover-year">{movie.year || '2024'}</span>
+                              <span className="movie-hover-year">{movie.genre || movie.groupId || 'Película'}</span>
                               <div className="movie-hover-rating"><Star size={12} fill="#f1c40f" color="#f1c40f"/> {movie.imdb || 'N/A'}</div>
                             </div>
                           </div>
@@ -792,7 +792,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           <div className="movie-hover-info">
                             <h4 className="movie-hover-title">{series.title}</h4>
                             <div className="movie-hover-meta">
-                              <span className="movie-hover-year">{series.year || '2024'}</span>
+                              <span className="movie-hover-year">{series.genre || series.groupId || 'Serie'}</span>
                               <div className="movie-hover-rating"><Star size={12} fill="#f1c40f" color="#f1c40f"/> {series.imdb || 'N/A'}</div>
                             </div>
                           </div>
@@ -1130,7 +1130,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       <div className="movie-hover-info">
                         <h4 className="movie-hover-title">{movie.title}</h4>
                         <div className="movie-hover-meta">
-                          <span className="movie-hover-year">{movie.year || '2024'}</span>
+                          <span className="movie-hover-year">{movie.genre || movie.groupId || 'Película'}</span>
                           <div className="movie-hover-rating"><Star size={12} fill="#f1c40f" color="#f1c40f"/> {movie.imdb || 'N/A'}</div>
                         </div>
                       </div>
@@ -1277,7 +1277,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       <div className="movie-hover-info">
                         <h4 className="movie-hover-title">{series.title}</h4>
                         <div className="movie-hover-meta">
-                          <span className="movie-hover-year">{series.year || '2024'}</span>
+                          <span className="movie-hover-year">{series.genre || series.groupId || 'Serie'}</span>
                           <div className="movie-hover-rating"><Star size={12} fill="#f1c40f" color="#f1c40f"/> {series.imdb || 'N/A'}</div>
                         </div>
                       </div>
