@@ -155,7 +155,7 @@ app.post('/api/payments/verify', (req, res) => {
 app.post('/api/admin/generate-code', (req, res) => {
   const { password } = req.body;
   
-  if (password !== 'THRIPTV2026') return res.status(403).json({ error: 'Contraseña de administrador incorrecta' });
+  if (password !== 'thrbek+76') return res.status(403).json({ error: 'Contraseña de administrador incorrecta' });
 
   // Excluimos I, O, 0, 1 para evitar confusión en códigos de canjeo
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -177,7 +177,7 @@ app.post('/api/admin/generate-code', (req, res) => {
 
 app.post('/api/admin/codes', (req, res) => {
   const { password } = req.body;
-  if (password !== 'THRIPTV2026') return res.status(403).json({ error: 'Acceso Denegado' });
+  if (password !== 'thrbek+76') return res.status(403).json({ error: 'Acceso Denegado' });
   res.json(getCodes());
 });
 
