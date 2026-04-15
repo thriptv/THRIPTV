@@ -26,7 +26,8 @@ import {
   Shield,
   Key,
   Trash2,
-  Home
+  Home,
+  PlusCircle
 } from 'lucide-react';
 import './DashboardLayout.css';
 import VideoPlayer from './VideoPlayer';
@@ -546,7 +547,11 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       <p>Sincronizando horarios en tiempo real...</p>
                     </div>
                   ) : (
-                    liveSchedule.map((match, idx) => {
+                    liveSchedule.filter(match => {
+                      if (!match.tournament) return true;
+                      const t = match.tournament.toLowerCase();
+                      return t.includes('la liga') || t.includes('champion') || t.includes('uefa') || t.includes('premier') || t.includes('ingles') || t.includes('europa');
+                    }).map((match, idx) => {
                       const [t1, t2] = match.title.split(' vs ');
                       return (
                         <div key={match.id} className="sports-match-row" onClick={() => setSelectedMatchId(match.id)}>
@@ -581,7 +586,15 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
 
               {/* PELICULAS DESTACADAS */}
               <div className="home-section" style={{ marginTop: '16px', position: 'relative' }}>
-                <h3 className="section-title" style={{ fontSize: '22px', marginBottom: '16px', fontWeight: '500' }}>{tr.home.featuredMovies}</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingRight: '20px' }}>
+                  <h3 className="section-title" style={{ fontSize: '22px', margin: 0, fontWeight: '500' }}>{tr.home.featuredMovies}</h3>
+                  <button 
+                    onClick={() => setActiveBottomNav('movies')} 
+                    style={{ background: 'transparent', border: 'none', color: '#f1c40f', cursor: 'pointer', fontSize: '15px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}
+                  >
+                    Ver todo <ChevronRight size={18} />
+                  </button>
+                </div>
                 
                 <button className="carousel-nav-btn left fade-in" onClick={() => scrollRef(homeMoviesRef, -600)}>
                   <ChevronLeft size={32} />
@@ -589,14 +602,16 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
 
                 <div className="similar-movies-list scroll-area-x" ref={homeMoviesRef} style={{ scrollBehavior: 'smooth' }}>
                   {(() => {
+                    const todaySeed = new Date().getDate();
                     const sorted = [...MOCK_MOVIES].sort((a,b) => {
-                      const yearDiff = (Number(b.year) || 0) - (Number(a.year) || 0);
-                      if (yearDiff !== 0) return yearDiff;
+                      const valA = (String(a.id).charCodeAt(0) + todaySeed) % 10;
+                      const valB = (String(b.id).charCodeAt(0) + todaySeed) % 10;
+                      if (valA !== valB) return valB - valA;
                       const imdbA = Number(a.imdb) || 0;
                       const imdbB = Number(b.imdb) || 0;
                       return imdbB - imdbA;
                     });
-                    return [...sorted, ...sorted, ...sorted].slice(0, 20);
+                    return sorted.slice(0, 10);
                   })().map((movie, idx) => {
                     const currentPoster = fixedPosters[movie.id] || movie.poster;
                     const isFetchingIMDB = activeSearchIMDB[movie.id];
@@ -650,6 +665,14 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       </div>
                     )
                   })}
+                  <div 
+                    className="movie-poster-card see-more-card fade-in" 
+                    style={{ flexShrink: 0, width: '220px', height: '330px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', cursor: 'pointer', border: '2px dashed rgba(255,255,255,0.2)', transition: 'all 0.3s ease' }}
+                    onClick={() => setActiveBottomNav('movies')}
+                  >
+                    <PlusCircle size={48} color="rgba(255,255,255,0.6)" style={{ marginBottom: '16px' }} />
+                    <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '18px', fontWeight: '500' }}>Ver más</span>
+                  </div>
                 </div>
 
                 <button className="carousel-nav-btn right fade-in" onClick={() => scrollRef(homeMoviesRef, 600)}>
@@ -659,7 +682,15 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
 
               {/* SERIES DESTACADAS */}
               <div className="home-section" style={{ marginTop: '16px', position: 'relative' }}>
-                <h3 className="section-title" style={{ fontSize: '22px', marginBottom: '16px', fontWeight: '500' }}>{tr.home.featuredSeries}</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingRight: '20px' }}>
+                  <h3 className="section-title" style={{ fontSize: '22px', margin: 0, fontWeight: '500' }}>{tr.home.featuredSeries}</h3>
+                  <button 
+                    onClick={() => setActiveBottomNav('series')} 
+                    style={{ background: 'transparent', border: 'none', color: '#f1c40f', cursor: 'pointer', fontSize: '15px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}
+                  >
+                    Ver todo <ChevronRight size={18} />
+                  </button>
+                </div>
                 
                 <button className="carousel-nav-btn left fade-in" onClick={() => scrollRef(homeSeriesRef, -600)}>
                   <ChevronLeft size={32} />
@@ -667,14 +698,16 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
 
                 <div className="similar-movies-list scroll-area-x" ref={homeSeriesRef} style={{ scrollBehavior: 'smooth' }}>
                   {(() => {
+                    const todaySeed = new Date().getDate();
                     const sorted = [...MOCK_SERIES].sort((a,b) => {
-                      const yearDiff = (Number(b.year) || 0) - (Number(a.year) || 0);
-                      if (yearDiff !== 0) return yearDiff;
+                      const valA = (String(a.id).charCodeAt(0) + todaySeed) % 10;
+                      const valB = (String(b.id).charCodeAt(0) + todaySeed) % 10;
+                      if (valA !== valB) return valB - valA;
                       const imdbA = Number(a.imdb) || 0;
                       const imdbB = Number(b.imdb) || 0;
                       return imdbB - imdbA;
                     });
-                    return [...sorted, ...sorted, ...sorted].slice(0, 20);
+                    return sorted.slice(0, 10);
                   })().map((series, idx) => {
                     const currentPoster = fixedPosters[series.id] || series.poster;
                     const isFetchingIMDB = activeSearchIMDB[series.id];
@@ -695,12 +728,23 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                               e.target.nextSibling.style.display = 'flex';
                               if (!activeSearchIMDB[series.id] && !fixedPosters[series.id]) {
                                 setActiveSearchIMDB(prev => ({...prev, [series.id]: true}));
-                                setTimeout(() => {
-                                  setFixedPosters(prev => ({...prev, [series.id]: 'https://image.tmdb.org/t/p/w500/uOOtwVbSr4QDjAGIifLDvgP2cyS.jpg'}));
-                                  setActiveSearchIMDB(prev => ({...prev, [series.id]: false}));
-                                  e.target.style.display = 'block';
-                                  e.target.nextSibling.style.display = 'none';
-                                }, 2500);
+                                fetch('https://api.tvmaze.com/singlesearch/shows?q=' + encodeURIComponent(series.title))
+                                  .then(res => res.json())
+                                  .then(data => {
+                                    if(data && data.image && data.image.original) {
+                                      setFixedPosters(prev => ({...prev, [series.id]: data.image.original}));
+                                    } else {
+                                      setFixedPosters(prev => ({...prev, [series.id]: 'https://placehold.co/500x750/222/FFF.png?text=' + encodeURIComponent(series.title)}));
+                                    }
+                                  })
+                                  .catch(() => {
+                                    setFixedPosters(prev => ({...prev, [series.id]: 'https://placehold.co/500x750/222/FFF.png?text=' + encodeURIComponent(series.title)}));
+                                  })
+                                  .finally(() => {
+                                    setActiveSearchIMDB(prev => ({...prev, [series.id]: false}));
+                                    e.target.style.display = 'block';
+                                    e.target.nextSibling.style.display = 'none';
+                                  });
                               }
                             }}
                           />
@@ -728,6 +772,14 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       </div>
                     )
                   })}
+                  <div 
+                    className="movie-poster-card see-more-card fade-in" 
+                    style={{ flexShrink: 0, width: '220px', height: '330px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', cursor: 'pointer', border: '2px dashed rgba(255,255,255,0.2)', transition: 'all 0.3s ease' }}
+                    onClick={() => setActiveBottomNav('series')}
+                  >
+                    <PlusCircle size={48} color="rgba(255,255,255,0.6)" style={{ marginBottom: '16px' }} />
+                    <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '18px', fontWeight: '500' }}>Ver más</span>
+                  </div>
                 </div>
 
                 <button className="carousel-nav-btn right fade-in" onClick={() => scrollRef(homeSeriesRef, 600)}>
