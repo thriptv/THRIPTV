@@ -295,7 +295,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
-        const res = await fetch('/api/sports/today');
+        const res = await fetch('/api/sports/schedule');
         const data = await res.json();
         if (data.success && data.schedule.length > 0) {
           setLiveSchedule(data.schedule);

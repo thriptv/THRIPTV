@@ -28,68 +28,60 @@ app.use(cors());
 app.use(express.json());
 
 // -------- RUTAS DE PRUEBA Y SALUD --------
-app.get('/api/sports/today', async (req, res) => {
+app.get('/api/sports/schedule', async (req, res) => {
   try {
-    const r = await axios.get('https://www.rafanadalpartidoapartido.com/deportes/futbol-hoy-tv/', {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' }
+    const r = await axios.get('https://www.partidos-de-hoy.com/', {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
     });
     const $ = cheerio.load(r.data);
     const matches = [];
-    
-    const todaySection = $('h3').first().nextUntil($('h3').eq(2));
-    let currentTournament = "Competición";
-    let dayLabel = "HOY";
-    
-    todaySection.each((i, el) => {
-      if (matches.length >= 10) return false;
-      
-      if (el.tagName === 'h3') {
-        dayLabel = "MAÑANA";
-      } else if (el.tagName === 'h4') {
-        currentTournament = $(el).text().trim().replace(/ Partidos.*/i, '') || "Competición";
-      } else if ($(el).hasClass('x') || $(el).find('.x').length > 0) {
-        const rows = $(el).hasClass('x') ? $(el) : $(el).find('.x');
-        rows.each((j, row) => {
-           const imgs = $(row).find('img');
-           const team1Img = imgs.eq(0).attr('src') || '';
-           const team1Name = imgs.eq(0).attr('alt') || 'Local';
-           
-           const team2Img = imgs.eq(1).attr('src') || '';
-           const team2Name = imgs.eq(1).attr('alt') || 'Visitante';
-           
-           const channels = [];
-           $(row).find('li').each((k, liItem) => {
-             channels.push($(liItem).text().replace('-', '').trim());
-           });
-           
-           let timeStr = dayLabel;
-           const timeMatch = $(row).text().match(/\d{2}:\d{2}/);
-           if (timeMatch) timeStr = `${dayLabel} ${timeMatch[0]}`;
-           
-           const topLeagues = ['CHAMPIONS', 'EUROPA', 'CONFERENCE', 'PRIMERA', 'LIGA', 'PREMIER', 'SERIE', 'BUNDESLIGA', 'LIGUE 1', 'MUNDIAL', 'EUROCOPA', 'COPA DEL REY', 'FA CUP'];
-           const isTopLeague = topLeagues.some(league => currentTournament.toUpperCase().includes(league));
-           
-           if(team1Name && team2Name && isTopLeague && matches.length < 10) {
-             matches.push({
-               id: `match-live-${i}-${j}`,
-               sportType: 'football',
-               title: `${team1Name} vs ${team2Name}`,
-               time: timeStr,
-               tournament: currentTournament,
-               channelName: channels.length > 0 ? channels[0] : "TV",
-               channelsList: channels,
-               team1: team1Img.startsWith('http') ? team1Img : 'https://www.rafanadalpartidoapartido.com' + team1Img,
-               team2: team2Img.startsWith('http') ? team2Img : 'https://www.rafanadalpartidoapartido.com' + team2Img,
-               bgImage: "https://images.unsplash.com/photo-1518605368461-1e12d5ee581b?auto=format&fit=crop&q=80&w=500"
-             });
-           }
-        });
-      }
+
+    $('script[type="application/ld+json"]').each((i, el) => {
+      try {
+        const jsonText = $(el).html();
+        if (jsonText) {
+          const data = JSON.parse(jsonText.trim());
+          if (data['@type'] === 'SportsEvent' || (Array.isArray(data) && data[0]['@type'] === 'SportsEvent')) {
+            const eventData = Array.isArray(data) ? data[0] : data;
+            
+            // Extraer canales
+            let channels = [];
+            if (eventData.location && Array.isArray(eventData.location)) {
+              eventData.location.forEach(loc => {
+                if (loc['@type'] === 'VirtualLocation' && loc.name) {
+                  channels = Array.isArray(loc.name) ? loc.name : [loc.name];
+                }
+              });
+            }
+
+            // Formatear Hora
+            let timeStr = 'HOY';
+            if (eventData.startDate) {
+                const dateObj = new Date(eventData.startDate);
+                timeStr = dateObj.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' });
+            }
+
+            if (eventData.homeTeam?.name && eventData.awayTeam?.name) {
+               matches.push({
+                 id: `match-live-${matches.length + 1}`,
+                 sportType: 'football',
+                 title: `${eventData.homeTeam.name} vs ${eventData.awayTeam.name}`,
+                 time: timeStr,
+                 tournament: eventData.description ? eventData.description.split(' de ')[1] || 'Torneo' : 'Fútbol',
+                 channelsList: channels,
+                 team1: eventData.homeTeam.image || '',
+                 team2: eventData.awayTeam.image || '',
+                 bgImage: "https://images.unsplash.com/photo-1518605368461-1e12d5ee581b?auto=format&fit=crop&q=80&w=500"
+               });
+            }
+          }
+        }
+      } catch (e) {} 
     });
 
     res.json({ success: true, schedule: matches });
   } catch (err) {
-    console.error("Scraper Error:", err.message);
+    console.error("New Scraper Error:", err.message);
     res.status(500).json({ success: false, error: 'Error fetching schedule' });
   }
 });
