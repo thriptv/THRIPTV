@@ -417,13 +417,16 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
     if (cat.id === 'hist') return { ...cat, count: history.length };
     
     if (cat.id === 'all') {
-       return { ...cat, count: activeBottomNav === 'movies' ? MOCK_MOVIES.length : MOCK_CHANNELS.length };
+       const allCount = activeBottomNav === 'movies' ? MOCK_MOVIES.length : activeBottomNav === 'series' ? MOCK_SERIES.length : MOCK_CHANNELS.length;
+       return { ...cat, count: allCount };
     }
 
     // Contar según el active context
     let specificCount = 0;
     if (activeBottomNav === 'movies') {
        specificCount = MOCK_MOVIES.filter(m => m.groupId === cat.id).length;
+    } else if (activeBottomNav === 'series') {
+       specificCount = MOCK_SERIES.filter(s => s.groupId === cat.id).length;
     } else {
        specificCount = MOCK_CHANNELS.filter(c => c.groupId === cat.id).length;
     }
@@ -539,8 +542,8 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
             {/* SEPARADOR VISUAL PARA LISTAS M3U */}
             <div style={{ height: '1px', background: '#1f1f1f', margin: '8px 20px' }}></div>
 
-            {/* RENDERIZADO DE GRUPOS DINÁMICOS M3U */}
-            {categoriesWithCounts.filter(cat => !SYSTEM_CATEGORIES.some(sys => sys.id === cat.id)).map(cat => {
+            {/* RENDERIZADO DE GRUPOS DINÁMICOS M3U (SOLO CATEGORÍAS QUE TIENEN ITEMS EN ESTA VISTA) */}
+            {categoriesWithCounts.filter(cat => !SYSTEM_CATEGORIES.some(sys => sys.id === cat.id) && cat.count > 0).map(cat => {
               return (
                 <div 
                   key={cat.id} 
