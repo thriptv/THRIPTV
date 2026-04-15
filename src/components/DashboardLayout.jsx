@@ -268,7 +268,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
   const MOCK_MOVIES = playlistData && playlistData.movies?.length > 0 ? playlistData.movies : STATIC_MOCK_MOVIES;
   const MOCK_SERIES = playlistData && playlistData.series?.length > 0 ? playlistData.series : STATIC_MOCK_SERIES;
   const MOCK_CATEGORIES = playlistData && playlistData.categories?.length > 0 
-    ? [{ id: 'all', name: 'Todos' }, { id: 'fav', name: 'Favoritos' }, { id: 'hist', name: 'Historial' }, ...playlistData.categories] 
+    ? [...SYSTEM_CATEGORIES, ...playlistData.categories] 
     : STATIC_MOCK_CATEGORIES;
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
