@@ -69,8 +69,8 @@ app.get('/api/sports/schedule', async (req, res) => {
                  time: timeStr,
                  tournament: eventData.description ? eventData.description.split(' de ')[1] || 'Torneo' : 'Fútbol',
                  channelsList: channels,
-                 team1: eventData.homeTeam.image || '',
-                 team2: eventData.awayTeam.image || '',
+                 team1: eventData.homeTeam.image || 'https://placehold.co/100x100/101010/FFF.png?text=Local',
+                 team2: eventData.awayTeam.image || 'https://placehold.co/100x100/101010/FFF.png?text=Visitante',
                  bgImage: "https://images.unsplash.com/photo-1518605368461-1e12d5ee581b?auto=format&fit=crop&q=80&w=500"
                });
             }

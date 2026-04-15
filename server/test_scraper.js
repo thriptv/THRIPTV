@@ -1,24 +1,21 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import fs from 'fs';
 
-async function test() {
+async function testMarca() {
   try {
-    const { data } = await axios.get('https://www.partidos-de-hoy.com/');
-    const $ = cheerio.load(data);
-    
-    // Intentaremos buscar listados lógicos
-    console.log("CLASES DE ELEMENTOS IL:", $('ul.lista, ul.matches, div.match, div.partido, table').length);
-    
-    // Vamos a buscar la palabra Real Madrid y ver en qué etiquetas vive
-    const els = $('*:contains("Madrid")').filter((i, el) => $(el).children().length === 0);
-    els.each((i, el) => {
-        let parentClassName = $(el).parent().attr('class');
-        let uncpParent = $(el).parent().parent().attr('class');
-        if(i < 3) console.log("TEXT Y Clases cerca de Madrid:", $(el).text().trim(), parentClassName, uncpParent);
+    const { data } = await axios.get('https://www.marca.com/programacion-tv.html', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      }
     });
+    
+    // Escribimos todo a un archivo local temporal para pasarlo a search simple
+    fs.writeFileSync('marca_dump.html', data);
+    console.log("DUMP OK! Tamanho:", data.length);
 
   } catch (error) {
     console.error("Fetch Error:", error.message);
   }
 }
-test();
+testMarca();
