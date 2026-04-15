@@ -863,12 +863,12 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           {(() => {
                             const [t1Name, t2Name] = match.title.split(' vs ').map(t => t?.trim().toLowerCase() || '');
                             
-                            // 1. Encontrar por EPG
-                            const epgMatches = (playlistData?.channels || []).filter(ch => {
-                              if (!ch.epg || ch.epg === 'En Directo') return false;
-                              const epgLower = ch.epg.toLowerCase();
-                              const match1 = t1Name && t1Name.length >= 3 && epgLower.includes(t1Name);
-                              const match2 = t2Name && t2Name.length >= 3 && epgLower.includes(t2Name);
+                            // 1. Encontrar por EPG o palabras clave en el canal si el nombre de los equipos está allí
+                            const epgMatches = MOCK_CHANNELS.filter(ch => {
+                              const epgLower = (ch.epg || '').toLowerCase();
+                              const nameLower = (ch.name || '').toLowerCase();
+                              const match1 = t1Name && t1Name.length >= 3 && (epgLower.includes(t1Name) || nameLower.includes(t1Name));
+                              const match2 = t2Name && t2Name.length >= 3 && (epgLower.includes(t2Name) || nameLower.includes(t2Name));
                               return match1 || match2;
                             });
 
@@ -878,9 +878,13 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                             
                             (match.channelsList && match.channelsList.length > 0 ? match.channelsList : ["Canales locales"]).forEach((channelText, cIdx) => {
                               const cName = typeof channelText === "string" ? channelText : (channelText.name || channelText);
-                              const searchName = cName.replace('M+', 'Movistar').replace(' HD', '').toLowerCase();
+                              const searchName = cName.replace('M+', 'Movistar').replace(/ HD/gi, '').trim().toLowerCase();
+                              const altSearchName = cName.replace('M+', 'M+').replace(/ HD/gi, '').trim().toLowerCase();
                               
-                              const found = (playlistData?.channels || []).filter(ch => ch.name.toLowerCase().includes(searchName));
+                              const found = MOCK_CHANNELS.filter(ch => {
+                                const lowerName = ch.name.toLowerCase();
+                                return lowerName.includes(searchName) || lowerName.includes(altSearchName);
+                              });
                               if (found.length > 0) {
                                 nameMatches.push(...found);
                               } else {
@@ -912,13 +916,23 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                                 })}
                                 
                                 {notFoundChannels.map((cName, idx) => (
-                                  <div key={`ch-${idx}-notfound`} className="channel-card" style={{ opacity: 0.5, cursor: 'not-allowed' }}>
+                                  <div 
+                                    key={`ch-${idx}-notfound`} 
+                                    className="channel-card" 
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => {
+                                      // Lo llevamos a la pestaña de Live y buscamos
+                                      setSelectedMatchId(null);
+                                      setActiveBottomNav('live');
+                                      setSearchQuery(cName.replace('M+', ''));
+                                    }}
+                                  >
                                     <div className="channel-logo-box">
-                                      <img src={`https://api.dicebear.com/7.x/identicon/svg?seed=${cName}&backgroundColor=222222`} alt={cName} className="channel-logo-img" />
+                                      <Search size={32} color="#888" />
                                     </div>
                                     <div className="channel-info">
                                       <h3 className="channel-name">{cName}</h3>
-                                      <p className="channel-epg" style={{color: 'var(--primary-red)'}}>No disponible en tu lista</p>
+                                      <p className="channel-epg" style={{color: '#f1c40f'}}>Buscar en tus canales...</p>
                                     </div>
                                   </div>
                                 ))}
