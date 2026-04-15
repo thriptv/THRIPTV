@@ -692,6 +692,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                         </div>
                       </div>
                     )
+                  })}
                 </div>
 
                 <button className="carousel-nav-btn right fade-in" onClick={() => scrollRef(homeMoviesRef, 600)}>
@@ -782,6 +783,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                         </div>
                       </div>
                     )
+                  })}
                 </div>
 
                 <button className="carousel-nav-btn right fade-in" onClick={() => scrollRef(homeSeriesRef, 600)}>
