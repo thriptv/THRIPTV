@@ -2183,3 +2183,9 @@ input:checked + .slider:before {
 .carousel-nav-btn.right {
   right: 10px;
 }
+
+@media (max-width: 1024px) {
+  .carousel-nav-btn {
+    display: none !important;
+  }
+}

@@ -667,11 +667,11 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                   })}
                   <div 
                     className="movie-poster-card see-more-card fade-in" 
-                    style={{ flexShrink: 0, width: '220px', height: '330px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', cursor: 'pointer', border: '2px dashed rgba(255,255,255,0.2)', transition: 'all 0.3s ease' }}
+                    style={{ flexShrink: 0, width: '220px', height: '330px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(241, 196, 15, 0.1)', borderRadius: '12px', cursor: 'pointer', border: '2px solid rgba(241, 196, 15, 0.5)', transition: 'all 0.3s ease' }}
                     onClick={() => setActiveBottomNav('movies')}
                   >
-                    <PlusCircle size={48} color="rgba(255,255,255,0.6)" style={{ marginBottom: '16px' }} />
-                    <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '18px', fontWeight: '500' }}>Ver más</span>
+                    <PlusCircle size={48} color="#f1c40f" style={{ marginBottom: '16px' }} />
+                    <span style={{ color: '#f1c40f', fontSize: '20px', fontWeight: 'bold', textAlign: 'center', padding: '0 10px' }}>VER MÁS<br/>PELÍCULAS</span>
                   </div>
                 </div>
 
@@ -774,11 +774,11 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                   })}
                   <div 
                     className="movie-poster-card see-more-card fade-in" 
-                    style={{ flexShrink: 0, width: '220px', height: '330px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', cursor: 'pointer', border: '2px dashed rgba(255,255,255,0.2)', transition: 'all 0.3s ease' }}
+                    style={{ flexShrink: 0, width: '220px', height: '330px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(241, 196, 15, 0.1)', borderRadius: '12px', cursor: 'pointer', border: '2px solid rgba(241, 196, 15, 0.5)', transition: 'all 0.3s ease' }}
                     onClick={() => setActiveBottomNav('series')}
                   >
-                    <PlusCircle size={48} color="rgba(255,255,255,0.6)" style={{ marginBottom: '16px' }} />
-                    <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '18px', fontWeight: '500' }}>Ver más</span>
+                    <PlusCircle size={48} color="#f1c40f" style={{ marginBottom: '16px' }} />
+                    <span style={{ color: '#f1c40f', fontSize: '20px', fontWeight: 'bold', textAlign: 'center', padding: '0 10px' }}>VER MÁS<br/>SERIES</span>
                   </div>
                 </div>
 
