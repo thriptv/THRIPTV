@@ -2189,3 +2189,10 @@ input:checked + .slider:before {
     display: none !important;
   }
 }
+ 
+   
+.fav-badge-floating { position: absolute; top: 8px; left: 8px; background: rgba(0, 0, 0, 0.6); border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; z-index: 15; cursor: pointer; transition: transform 0.2s ease, background 0.2s ease; }  
+.fav-badge-floating:hover { transform: scale(1.1); background: rgba(0, 0, 0, 0.8); }  
+.imdb-badge-floating { position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.7); padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 4px; z-index: 15; backdrop-filter: blur(4px); }  
+.title-badge-floating { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.4) 70%, transparent); padding: 30px 10px 12px 10px; text-align: center; z-index: 15; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; display: flex; align-items: flex-end; justify-content: center; }  
+.title-badge-floating span { font-size: 14px; font-weight: 600; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.9); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2; text-align: center; } 

@@ -659,7 +659,22 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                         style={{ flexShrink: 0, width: '220px', height: '330px' }}
                         onClick={() => setSelectedMovieId(movie.id)}
                       >
-                        <div className="movie-poster-wrapper">
+                        <div className="movie-poster-wrapper" style={{ position: 'relative' }}>
+                          <button 
+                            className="fav-badge-floating" 
+                            onClick={(e) => { e.stopPropagation(); toggleFavorite(e, movie.id); }}
+                          >
+                            <Star fill={favorites.includes(movie.id) ? '#f1c40f' : 'rgba(0,0,0,0.5)'} color={favorites.includes(movie.id) ? '#f1c40f' : '#fff'} size={16} />
+                          </button>
+                          
+                          <div className="imdb-badge-floating">
+                            <Star size={10} fill="#f1c40f" color="#f1c40f"/> {movie.imdb || 'N/A'}
+                          </div>
+
+                          <div className="title-badge-floating">
+                            <span>{movie.title}</span>
+                          </div>
+                          
                           <img 
                             src={currentPoster} 
                             alt={movie.title} 
@@ -692,10 +707,8 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                             )}
                           </div>
                           <div className="movie-hover-info">
-                            <h4 className="movie-hover-title">{movie.title}</h4>
-                            <div className="movie-hover-meta">
+                            <div className="movie-hover-meta" style={{ justifyContent: 'center' }}>
                               <span className="movie-hover-year">{movie.genre || movie.groupId || 'Película'}</span>
-                              <div className="movie-hover-rating"><Star size={12} fill="#f1c40f" color="#f1c40f"/> {movie.imdb || 'N/A'}</div>
                             </div>
                           </div>
                         </div>
@@ -739,7 +752,22 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                         style={{ flexShrink: 0, width: '220px', height: '330px' }}
                         onClick={() => setSelectedSeriesId(series.id)}
                       >
-                        <div className="movie-poster-wrapper">
+                        <div className="movie-poster-wrapper" style={{ position: 'relative' }}>
+                          <button 
+                            className="fav-badge-floating" 
+                            onClick={(e) => { e.stopPropagation(); toggleFavorite(e, series.id); }}
+                          >
+                            <Star fill={favorites.includes(series.id) ? '#f1c40f' : 'rgba(0,0,0,0.5)'} color={favorites.includes(series.id) ? '#f1c40f' : '#fff'} size={16} />
+                          </button>
+                          
+                          <div className="imdb-badge-floating">
+                            <Star size={10} fill="#f1c40f" color="#f1c40f"/> {series.imdb || 'N/A'}
+                          </div>
+
+                          <div className="title-badge-floating">
+                            <span>{series.title}</span>
+                          </div>
+                          
                           <img 
                             src={currentPoster} 
                             alt={series.title} 
@@ -783,10 +811,8 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                             )}
                           </div>
                           <div className="movie-hover-info">
-                            <h4 className="movie-hover-title">{series.title}</h4>
-                            <div className="movie-hover-meta">
+                            <div className="movie-hover-meta" style={{ justifyContent: 'center' }}>
                               <span className="movie-hover-year">{series.genre || series.groupId || 'Serie'}</span>
-                              <div className="movie-hover-rating"><Star size={12} fill="#f1c40f" color="#f1c40f"/> {series.imdb || 'N/A'}</div>
                             </div>
                           </div>
                         </div>
@@ -1057,17 +1083,21 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                 return (
                   <div key={movie.id} className="movie-poster-card" onClick={() => handleItemClick(movie.id)}>
                     
-                    <div className="movie-poster-wrapper">
-                      {/* Favorito Star Top Left (Outline default) */}
-                      <Star 
-                        size={20} 
-                        className={`star-icon-movie pos-top-left ${isFav ? 'favorited' : ''}`} 
+                    <div className="movie-poster-wrapper" style={{ position: 'relative' }}>
+                      <button 
+                        className="fav-badge-floating" 
                         onClick={(e) => { e.stopPropagation(); toggleFavorite(e, movie.id); }}
-                        fill={isFav ? '#fff' : 'none'}
-                        color={isFav ? '#fff' : 'rgba(255,255,255,0.9)'}
-                        strokeWidth={isFav ? "0" : "2"}
-                        style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 10, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.8))' }}
-                      />
+                      >
+                        <Star fill={isFav ? '#f1c40f' : 'rgba(0,0,0,0.5)'} color={isFav ? '#f1c40f' : '#fff'} size={16} />
+                      </button>
+                      
+                      <div className="imdb-badge-floating">
+                        <Star size={10} fill="#f1c40f" color="#f1c40f"/> {movie.imdb || 'N/A'}
+                      </div>
+
+                      <div className="title-badge-floating">
+                        <span>{movie.title}</span>
+                      </div>
 
                       {/* Imagen Real o Rescatada de IMDb */}
                       <img 
@@ -1112,10 +1142,8 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                     </div>
 
                       <div className="movie-hover-info">
-                        <h4 className="movie-hover-title">{movie.title}</h4>
-                        <div className="movie-hover-meta">
+                        <div className="movie-hover-meta" style={{ justifyContent: 'center' }}>
                           <span className="movie-hover-year">{movie.genre || movie.groupId || 'Película'}</span>
-                          <div className="movie-hover-rating"><Star size={12} fill="#f1c40f" color="#f1c40f"/> {movie.imdb || 'N/A'}</div>
                         </div>
                       </div>
                     </div>
@@ -1244,25 +1272,30 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                 const isFav = favorites.includes(series.id);
                 return (
                   <div key={series.id} className="movie-poster-card" onClick={() => { setSelectedSeriesId(series.id); setActiveSeason(1); }}>
-                    <div className="movie-poster-wrapper">
-                      <Star 
-                        size={24} 
-                        className={`star-icon-movie pos-top-left ${isFav ? 'favorited' : ''}`} 
+                    <div className="movie-poster-wrapper" style={{ position: 'relative' }}>
+                      <button 
+                        className="fav-badge-floating" 
                         onClick={(e) => { e.stopPropagation(); toggleFavorite(e, series.id); }}
-                        fill={isFav ? '#f1c40f' : 'rgba(0,0,0,0.6)'}
-                        color={isFav ? '#f1c40f' : 'rgba(255,255,255,0.8)'}
-                        style={{ position: 'absolute', top: '8px', left: '8px', zIndex: 10, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.8))' }}
-                      />
+                      >
+                        <Star fill={isFav ? '#f1c40f' : 'rgba(0,0,0,0.5)'} color={isFav ? '#f1c40f' : '#fff'} size={16} />
+                      </button>
+                      
+                      <div className="imdb-badge-floating">
+                        <Star size={10} fill="#f1c40f" color="#f1c40f"/> {series.imdb || 'N/A'}
+                      </div>
+
+                      <div className="title-badge-floating">
+                        <span>{series.title}</span>
+                      </div>
+                      
                       <img 
                         src={series.poster} 
                         alt={series.title} 
                         className="movie-poster-img"
                       />
                       <div className="movie-hover-info">
-                        <h4 className="movie-hover-title">{series.title}</h4>
-                        <div className="movie-hover-meta">
+                        <div className="movie-hover-meta" style={{ justifyContent: 'center' }}>
                           <span className="movie-hover-year">{series.genre || series.groupId || 'Serie'}</span>
-                          <div className="movie-hover-rating"><Star size={12} fill="#f1c40f" color="#f1c40f"/> {series.imdb || 'N/A'}</div>
                         </div>
                       </div>
                     </div>
