@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Radio, 
   RefreshCcw, 
@@ -273,6 +273,11 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [activeBottomNav, setActiveBottomNav] = useState('home'); // 'home' | 'settings' | 'movies' | 'series' | 'live'
+  
+  const homeMoviesRef = useRef(null);
+  const homeSeriesRef = useRef(null);
+  const scrollRef = (ref, amount) => { if(ref.current) ref.current.scrollBy({ left: amount, behavior: 'smooth' }); };
+  
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMovieId, setSelectedMovieId] = useState(null);
@@ -575,69 +580,159 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
               </div>
 
               {/* PELICULAS DESTACADAS */}
-              <div className="home-section" style={{ marginTop: '16px' }}>
+              <div className="home-section" style={{ marginTop: '16px', position: 'relative' }}>
                 <h3 className="section-title" style={{ fontSize: '22px', marginBottom: '16px', fontWeight: '500' }}>{tr.home.featuredMovies}</h3>
-                <div className="similar-movies-list scroll-area-x">
+                
+                <button className="carousel-nav-btn left fade-in" onClick={() => scrollRef(homeMoviesRef, -600)}>
+                  <ChevronLeft size={32} />
+                </button>
+
+                <div className="similar-movies-list scroll-area-x" ref={homeMoviesRef} style={{ scrollBehavior: 'smooth' }}>
                   {(() => {
                     const sorted = [...MOCK_MOVIES].sort((a,b) => {
-                      const yearDiff = (Number(b.year) || 0) - (Number(a.year) || 0);
-                      if (yearDiff !== 0) return yearDiff;
-                      return (Number(b.imdb) || 0) - (Number(a.imdb) || 0);
+                      const imdbA = Number(a.imdb) || 0;
+                      const imdbB = Number(b.imdb) || 0;
+                      const imdbDiff = imdbB - imdbA;
+                      if (imdbDiff !== 0) return imdbDiff;
+                      return (Number(b.year) || 0) - (Number(a.year) || 0);
                     });
                     return [...sorted, ...sorted, ...sorted].slice(0, 20);
-                  })().map((movie, idx) => (
-                    <div 
-                      key={`${movie.id}-${idx}`} 
-                      className="movie-poster-card" 
-                      style={{ flexShrink: 0, width: '220px', height: '330px' }}
-                      onClick={() => setSelectedMovieId(movie.id)}
-                    >
-                      <div className="movie-poster-wrapper">
-                        <img src={fixedPosters[movie.id] || movie.poster} alt={movie.title} className="movie-poster-img" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
-                        <div className="movie-hover-info">
-                          <h4 className="movie-hover-title">{movie.title}</h4>
-                          <div className="movie-hover-meta">
-                            <span className="movie-hover-year">{movie.year || '2024'}</span>
-                            <div className="movie-hover-rating"><Star size={12} fill="#f1c40f" color="#f1c40f"/> {movie.imdb || 'N/A'}</div>
+                  })().map((movie, idx) => {
+                    const currentPoster = fixedPosters[movie.id] || movie.poster;
+                    const isFetchingIMDB = activeSearchIMDB[movie.id];
+                    return (
+                      <div 
+                        key={`${movie.id}-${idx}`} 
+                        className="movie-poster-card" 
+                        style={{ flexShrink: 0, width: '220px', height: '330px' }}
+                        onClick={() => setSelectedMovieId(movie.id)}
+                      >
+                        <div className="movie-poster-wrapper">
+                          <img 
+                            src={currentPoster} 
+                            alt={movie.title} 
+                            className="movie-poster-img" 
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                              if (!activeSearchIMDB[movie.id] && !fixedPosters[movie.id]) {
+                                setActiveSearchIMDB(prev => ({...prev, [movie.id]: true}));
+                                setTimeout(() => {
+                                  setFixedPosters(prev => ({...prev, [movie.id]: 'https://image.tmdb.org/t/p/w500/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg'}));
+                                  setActiveSearchIMDB(prev => ({...prev, [movie.id]: false}));
+                                  e.target.style.display = 'block';
+                                  e.target.nextSibling.style.display = 'none';
+                                }, 2500);
+                              }
+                            }} 
+                          />
+                          <div className="movie-poster-fallback" style={{ display: 'none' }}>
+                            {isFetchingIMDB ? (
+                               <>
+                                 <RefreshCcw className="icon-spin" size={32} color="#f1c40f" style={{ marginBottom: '8px' }} />
+                                 <span style={{ color: '#f1c40f', fontSize: '12px' }}>Buscando en IMDB...</span>
+                               </>
+                            ) : (
+                               <>
+                                 <ImageIcon size={32} color="#444" style={{ marginBottom: '8px' }} />
+                                 <span>{movie.title}</span>
+                               </>
+                            )}
+                          </div>
+                          <div className="movie-hover-info">
+                            <h4 className="movie-hover-title">{movie.title}</h4>
+                            <div className="movie-hover-meta">
+                              <span className="movie-hover-year">{movie.year || '2024'}</span>
+                              <div className="movie-hover-rating"><Star size={12} fill="#f1c40f" color="#f1c40f"/> {movie.imdb || 'N/A'}</div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
+
+                <button className="carousel-nav-btn right fade-in" onClick={() => scrollRef(homeMoviesRef, 600)}>
+                  <ChevronRight size={32} />
+                </button>
               </div>
 
               {/* SERIES DESTACADAS */}
-              <div className="home-section" style={{ marginTop: '16px' }}>
+              <div className="home-section" style={{ marginTop: '16px', position: 'relative' }}>
                 <h3 className="section-title" style={{ fontSize: '22px', marginBottom: '16px', fontWeight: '500' }}>{tr.home.featuredSeries}</h3>
-                <div className="similar-movies-list scroll-area-x">
+                
+                <button className="carousel-nav-btn left fade-in" onClick={() => scrollRef(homeSeriesRef, -600)}>
+                  <ChevronLeft size={32} />
+                </button>
+
+                <div className="similar-movies-list scroll-area-x" ref={homeSeriesRef} style={{ scrollBehavior: 'smooth' }}>
                   {(() => {
                     const sorted = [...MOCK_SERIES].sort((a,b) => {
-                      const yearDiff = (Number(b.year) || 0) - (Number(a.year) || 0);
-                      if (yearDiff !== 0) return yearDiff;
-                      return (Number(b.imdb) || 0) - (Number(a.imdb) || 0);
+                      const imdbA = Number(a.imdb) || 0;
+                      const imdbB = Number(b.imdb) || 0;
+                      const imdbDiff = imdbB - imdbA;
+                      if (imdbDiff !== 0) return imdbDiff;
+                      return (Number(b.year) || 0) - (Number(a.year) || 0);
                     });
                     return [...sorted, ...sorted, ...sorted].slice(0, 20);
-                  })().map((series, idx) => (
-                    <div 
-                      key={`${series.id}-${idx}`} 
-                      className="movie-poster-card" 
-                      style={{ flexShrink: 0, width: '220px', height: '330px' }}
-                      onClick={() => setSelectedSeriesId(series.id)}
-                    >
-                      <div className="movie-poster-wrapper">
-                        <img src={series.poster} alt={series.title} className="movie-poster-img" />
-                        <div className="movie-hover-info">
-                          <h4 className="movie-hover-title">{series.title}</h4>
-                          <div className="movie-hover-meta">
-                            <span className="movie-hover-year">{series.year || '2024'}</span>
-                            <div className="movie-hover-rating"><Star size={12} fill="#f1c40f" color="#f1c40f"/> {series.imdb || 'N/A'}</div>
+                  })().map((series, idx) => {
+                    const currentPoster = fixedPosters[series.id] || series.poster;
+                    const isFetchingIMDB = activeSearchIMDB[series.id];
+                    return (
+                      <div 
+                        key={`${series.id}-${idx}`} 
+                        className="movie-poster-card" 
+                        style={{ flexShrink: 0, width: '220px', height: '330px' }}
+                        onClick={() => setSelectedSeriesId(series.id)}
+                      >
+                        <div className="movie-poster-wrapper">
+                          <img 
+                            src={currentPoster} 
+                            alt={series.title} 
+                            className="movie-poster-img" 
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                              if (!activeSearchIMDB[series.id] && !fixedPosters[series.id]) {
+                                setActiveSearchIMDB(prev => ({...prev, [series.id]: true}));
+                                setTimeout(() => {
+                                  setFixedPosters(prev => ({...prev, [series.id]: 'https://image.tmdb.org/t/p/w500/uOOtwVbSr4QDjAGIifLDvgP2cyS.jpg'}));
+                                  setActiveSearchIMDB(prev => ({...prev, [series.id]: false}));
+                                  e.target.style.display = 'block';
+                                  e.target.nextSibling.style.display = 'none';
+                                }, 2500);
+                              }
+                            }}
+                          />
+                          <div className="movie-poster-fallback" style={{ display: 'none' }}>
+                            {isFetchingIMDB ? (
+                               <>
+                                 <RefreshCcw className="icon-spin" size={32} color="#f1c40f" style={{ marginBottom: '8px' }} />
+                                 <span style={{ color: '#f1c40f', fontSize: '12px' }}>Buscando en IMDB...</span>
+                               </>
+                            ) : (
+                               <>
+                                 <ImageIcon size={32} color="#444" style={{ marginBottom: '8px' }} />
+                                 <span>{series.title}</span>
+                               </>
+                            )}
+                          </div>
+                          <div className="movie-hover-info">
+                            <h4 className="movie-hover-title">{series.title}</h4>
+                            <div className="movie-hover-meta">
+                              <span className="movie-hover-year">{series.year || '2024'}</span>
+                              <div className="movie-hover-rating"><Star size={12} fill="#f1c40f" color="#f1c40f"/> {series.imdb || 'N/A'}</div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
+
+                <button className="carousel-nav-btn right fade-in" onClick={() => scrollRef(homeSeriesRef, 600)}>
+                  <ChevronRight size={32} />
+                </button>
               </div>
 
             </div>

@@ -2145,3 +2145,41 @@ input:checked + .slider:before {
     justify-content: center;
   }
 }
+
+/* --- HORIZONTAL CAROUSEL NAV BUTTONS --- */
+.carousel-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.home-section:hover .carousel-nav-btn {
+  opacity: 1;
+}
+
+.carousel-nav-btn:hover {
+  background: var(--primary-red);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-nav-btn.left {
+  left: 10px;
+}
+
+.carousel-nav-btn.right {
+  right: 10px;
+}
