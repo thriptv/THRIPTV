@@ -713,7 +713,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           </div>
                           <div className="movie-hover-info">
                             <div className="movie-hover-meta" style={{ justifyContent: 'center' }}>
-                              <span className="movie-hover-year">{movie.genre || movie.groupId || 'Película'}</span>
+                              <span className="movie-hover-year">{cleanTitle(movie.title)}</span>
                             </div>
                           </div>
                         </div>
@@ -817,7 +817,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           </div>
                           <div className="movie-hover-info">
                             <div className="movie-hover-meta" style={{ justifyContent: 'center' }}>
-                              <span className="movie-hover-year">{series.genre || series.groupId || 'Serie'}</span>
+                              <span className="movie-hover-year">{cleanTitle(series.title)}</span>
                             </div>
                           </div>
                         </div>
@@ -1162,7 +1162,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
 
                       <div className="movie-hover-info">
                         <div className="movie-hover-meta" style={{ justifyContent: 'center' }}>
-                          <span className="movie-hover-year">{movie.genre || movie.groupId || 'Película'}</span>
+                          <span className="movie-hover-year">{cleanTitle(movie.title)}</span>
                         </div>
                       </div>
                     </div>
@@ -1314,7 +1314,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       />
                       <div className="movie-hover-info">
                         <div className="movie-hover-meta" style={{ justifyContent: 'center' }}>
-                          <span className="movie-hover-year">{series.genre || series.groupId || 'Serie'}</span>
+                          <span className="movie-hover-year">{cleanTitle(series.title)}</span>
                         </div>
                       </div>
                     </div>
