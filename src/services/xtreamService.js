@@ -50,7 +50,7 @@ export const fetchXtreamData = async (serverUrl, username, password) => {
       epg: 'En Directo',
       img: ch.stream_icon || '',
       groupId: catMap[ch.category_id] || 'General',
-      url: `${baseUrl}/live/${username}/${password}/${ch.stream_id}.ts`,
+      url: `${baseUrl}/live/${username}/${password}/${ch.stream_id}.m3u8`,
       category: 'TV'
     }));
 
