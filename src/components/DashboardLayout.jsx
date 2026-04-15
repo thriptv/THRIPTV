@@ -628,17 +628,8 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
 
                 <div className="similar-movies-list scroll-area-x" ref={homeMoviesRef} style={{ scrollBehavior: 'smooth' }}>
                   {(() => {
-                    const todaySeed = new Date().getDate();
-                    const sorted = [...MOCK_MOVIES].sort((a,b) => {
-                      const valA = (String(a.id).charCodeAt(0) + todaySeed) % 10;
-                      const valB = (String(b.id).charCodeAt(0) + todaySeed) % 10;
-                      if (valA !== valB) return valB - valA;
-                      // Simulando "Popularidad" sin guiarse por la puntuación
-                      const popA = (Number(a.year) || 2000) + String(a.title).length;
-                      const popB = (Number(b.year) || 2000) + String(b.title).length;
-                      return popB - popA;
-                    });
-                    return sorted.slice(0, 10);
+                    // Tomamos los primeros elementos entregados por el proveedor (suelen ser las novedades / más vistas)
+                    return MOCK_MOVIES.slice(0, 10);
                   })().map((movie, idx) => {
                     const currentPoster = fixedPosters[movie.id] || movie.poster;
                     const isFetchingIMDB = activeSearchIMDB[movie.id];
@@ -691,15 +682,6 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                         </div>
                       </div>
                     )
-                  })}
-                  <div 
-                    className="movie-poster-card see-more-card fade-in" 
-                    style={{ flexShrink: 0, width: '220px', height: '330px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(241, 196, 15, 0.1)', borderRadius: '12px', cursor: 'pointer', border: '2px solid rgba(241, 196, 15, 0.5)', transition: 'all 0.3s ease' }}
-                    onClick={() => setActiveBottomNav('movies')}
-                  >
-                    <PlusCircle size={48} color="#f1c40f" style={{ marginBottom: '16px' }} />
-                    <span style={{ color: '#f1c40f', fontSize: '20px', fontWeight: 'bold', textAlign: 'center', padding: '0 10px' }}>VER MÁS<br/>PELÍCULAS</span>
-                  </div>
                 </div>
 
                 <button className="carousel-nav-btn right fade-in" onClick={() => scrollRef(homeMoviesRef, 600)}>
@@ -725,17 +707,8 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
 
                 <div className="similar-movies-list scroll-area-x" ref={homeSeriesRef} style={{ scrollBehavior: 'smooth' }}>
                   {(() => {
-                    const todaySeed = new Date().getDate();
-                    const sorted = [...MOCK_SERIES].sort((a,b) => {
-                      const valA = (String(a.id).charCodeAt(0) + todaySeed) % 10;
-                      const valB = (String(b.id).charCodeAt(0) + todaySeed) % 10;
-                      if (valA !== valB) return valB - valA;
-                      // Simulando "Popularidad" sin guiarse por la puntuación
-                      const popA = (Number(a.year) || 2000) + String(a.title).length;
-                      const popB = (Number(b.year) || 2000) + String(b.title).length;
-                      return popB - popA;
-                    });
-                    return sorted.slice(0, 10);
+                    // Tomamos los primeros elementos entregados por el proveedor (suelen ser las novedades / más vistas)
+                    return MOCK_SERIES.slice(0, 10);
                   })().map((series, idx) => {
                     const currentPoster = fixedPosters[series.id] || series.poster;
                     const isFetchingIMDB = activeSearchIMDB[series.id];
@@ -799,15 +772,6 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                         </div>
                       </div>
                     )
-                  })}
-                  <div 
-                    className="movie-poster-card see-more-card fade-in" 
-                    style={{ flexShrink: 0, width: '220px', height: '330px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(241, 196, 15, 0.1)', borderRadius: '12px', cursor: 'pointer', border: '2px solid rgba(241, 196, 15, 0.5)', transition: 'all 0.3s ease' }}
-                    onClick={() => setActiveBottomNav('series')}
-                  >
-                    <PlusCircle size={48} color="#f1c40f" style={{ marginBottom: '16px' }} />
-                    <span style={{ color: '#f1c40f', fontSize: '20px', fontWeight: 'bold', textAlign: 'center', padding: '0 10px' }}>VER MÁS<br/>SERIES</span>
-                  </div>
                 </div>
 
                 <button className="carousel-nav-btn right fade-in" onClick={() => scrollRef(homeSeriesRef, 600)}>
