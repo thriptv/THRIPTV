@@ -721,24 +721,27 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                         <div key={match.id} className="sports-match-row manual-sports-card" onClick={() => setSelectedMatchId(match.id)} style={{ position: 'relative', overflow: 'hidden', minHeight: '65px', width: '100%', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', cursor: 'pointer', transition: 'transform 0.2s', display: 'flex', alignItems: 'center', padding: '10px 20px', marginBottom: '8px' }}>
                           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: `linear-gradient(to right, rgba(20,20,20,0.95), rgba(10,10,10,0.98))`, zIndex: 0 }} className="sports-bg-layer"></div>
                           
-                          {/* Flujo Unificado a la Izquierda (Tren de metadatos) */}
-                          <div className="match-info-fluid" style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '24px' }}>
-                            <div className="match-time-col" style={{ display: 'flex', alignItems: 'center', borderRight: '1px solid rgba(255,255,255,0.1)', paddingRight: '24px' }}>
+                          {/* Flujo Unificado a la Izquierda (Tren Tabular) */}
+                          <div className="match-info-fluid" style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: 0 }}>
+                            
+                            <div className="match-time-col" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderRight: '1px solid rgba(255,255,255,0.1)', minWidth: '80px', height: '100%' }}>
                               <span className="match-time-main" style={{ color: 'var(--primary-red)', fontSize: '22px', fontWeight: '900', margin: 0, padding: 0, textShadow: '0 2px 8px rgba(217, 30, 24, 0.6)' }}>{showHora}</span>
                             </div>
 
-                            {showDia && (
-                              <div className="match-day-col" style={{ display: 'flex', alignItems: 'center', borderRight: '1px solid rgba(255,255,255,0.1)', paddingRight: '24px' }}>
+                            {showDia ? (
+                              <div className="match-day-col" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderRight: '1px solid rgba(255,255,255,0.1)', minWidth: '100px', height: '100%' }}>
                                 <span className="match-time-sub" style={{ color: 'white', fontWeight: '800', fontSize: '15px', textTransform: 'uppercase', margin: 0, padding: 0, opacity: 0.9, letterSpacing: '0.5px' }}>{showDia}</span>
                               </div>
+                            ) : (
+                              <div className="match-day-col" style={{ borderRight: '1px solid rgba(255,255,255,0.1)', minWidth: '100px', height: '100%' }}></div>
                             )}
                             
-                            <div className="match-tournament-col" style={{ display: 'flex', alignItems: 'center', gap: '10px', borderRight: '1px solid rgba(255,255,255,0.1)', paddingRight: '24px' }}>
+                            <div className="match-tournament-col" style={{ display: 'flex', alignItems: 'center', gap: '10px', borderRight: '1px solid rgba(255,255,255,0.1)', minWidth: '160px', paddingLeft: '20px', paddingRight: '20px', height: '100%' }}>
                               {match.tournamentLogo && <img src={match.tournamentLogo} alt="Torneo" style={{ width: '28px', height: '28px', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none'; }} />}
                               {match.tournament && <span className="match-time-sub" style={{ color: '#f1c40f', fontWeight: '800', fontSize: '15px', textTransform: 'uppercase', margin: 0, padding: 0, letterSpacing: '0.5px' }}>{match.tournament}</span>}
                             </div>
 
-                            <div className="match-teams-col" style={{ display: 'flex', alignItems: 'center' }}>
+                            <div className="match-teams-col" style={{ display: 'flex', alignItems: 'center', paddingLeft: '20px', flex: 1 }}>
                               <span style={{ color: 'white', fontWeight: '800', fontSize: '15px', textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0, padding: 0 }}>{(match.title || '').replace(/\s+vs\s+/gi, ' - ')}</span>
                             </div>
                           </div>
