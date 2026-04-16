@@ -375,6 +375,72 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
     }
   }, [selectedMovieId]);
 
+  useEffect(() => {
+    if (selectedSeriesId && !movieDetails[selectedSeriesId]) {
+      const s = MOCK_SERIES.find(x => x.id === selectedSeriesId);
+      if (s && s.id && s.id.startsWith('series_')) {
+        const streamId = s.id.replace('series_', '');
+        const xtUrl = localStorage.getItem('thriptv_xtUrl');
+        const xtUser = localStorage.getItem('thriptv_xtUser');
+        const xtPass = localStorage.getItem('thriptv_xtPass');
+        
+        if (xtUrl && xtUser && xtPass) {
+          fetch('/api/proxy/xtream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              url: xtUrl.replace(/\/+$/, ''), 
+              username: xtUser, 
+              password: xtPass, 
+              action: `get_series_info&series_id=${streamId}` 
+            })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data) {
+              const info = data.info || {};
+              let extractedSeasons = [];
+              if (data.episodes && typeof data.episodes === 'object') {
+                Object.keys(data.episodes).forEach(seasonNum => {
+                   let epsList = data.episodes[seasonNum];
+                   if (Array.isArray(epsList) && epsList.length > 0) {
+                      extractedSeasons.push({
+                         seasonNumber: parseInt(seasonNum, 10),
+                         episodes: epsList.map((ep, idx) => ({
+                            id: ep.id || `ep_${idx}`,
+                            epNumber: ep.episode_num || (idx + 1),
+                            title: ep.title || `Episodio ${idx + 1}`,
+                            duration: ep.info?.duration ? `${ep.info.duration} min` : 'N/A',
+                            synopsis: ep.info?.plot || '',
+                            image: ep.info?.movie_image || '',
+                            url: `${xtUrl.replace(/\/+$/, '')}/series/${xtUser}/${xtPass}/${ep.id}.${ep.container_extension || 'mp4'}`
+                         }))
+                      });
+                   }
+                });
+              }
+              extractedSeasons.sort((a,b) => a.seasonNumber - b.seasonNumber);
+
+              setMovieDetails(prev => ({
+                ...prev,
+                [selectedSeriesId]: {
+                  director: info.director || s.director,
+                  cast: info.cast || info.actors || s.cast,
+                  synopsis: info.plot || info.description || s.synopsis,
+                  imdb: info.rating || info.rating_5based || s.imdb,
+                  year: info.year || info.releaseDate || s.year,
+                  genre: info.genre || s.genre,
+                  seasons: extractedSeasons.length > 0 ? extractedSeasons : s.seasons
+                }
+              }));
+            }
+          })
+          .catch(e => console.error("Error obteniendo detalles Series:", e));
+        }
+      }
+    }
+  }, [selectedSeriesId]);
+
   // MOTORES DE MEMORIA (FAVORITOS E HISTORIAL COMPARTIDO)
   const [favorites, setFavorites] = useState([]); 
   const [history, setHistory] = useState([]); 
@@ -1222,8 +1288,10 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
             {(() => {
               const series = MOCK_SERIES.find(s => s.id === selectedSeriesId);
               if (!series) return null;
+              const activeDetails = movieDetails[series.id] || {};
               const isFav = favorites.includes(series.id);
-              const currentSeason = series.seasons.find(s => s.seasonNumber === activeSeason) || series.seasons[0];
+              const displaySeasons = activeDetails.seasons || series.seasons;
+              const currentSeason = displaySeasons.find(s => s.seasonNumber === activeSeason) || displaySeasons[0] || { seasonNumber: 1, episodes: [] };
               
               return (
                 <div className="movie-detail-wrapper">
@@ -1262,23 +1330,23 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           
                           <div className="movie-detail-meta" style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '24px' }}>
                             <span style={{ background: '#ffb400', color: '#000', fontWeight: 'bold', padding: '4px 12px', borderRadius: '4px', fontSize: '15px' }}>
-                              {formatRating(series.imdb)}
+                              {formatRating(activeDetails.imdb || series.imdb)}
                             </span>
                           </div>
 
                           <p className="movie-detail-synopsis" style={{ fontSize: '16px', lineHeight: '1.6', color: '#d1d1d1', marginBottom: '25px', maxWidth: '650px' }}>
-                            {series.synopsis}
+                            {activeDetails.synopsis || series.synopsis}
                           </p>
 
                           <table className="movie-detail-crew-table" style={{ fontSize: '15px', borderCollapse: 'collapse', marginBottom: '35px' }}>
                             <tbody>
                               <tr>
                                 <td style={{ color: '#fff', fontWeight: 'bold', paddingRight: '20px', paddingBottom: '8px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>Director:</td>
-                                <td style={{ color: '#d1d1d1', paddingBottom: '8px' }}>{series.director}</td>
+                                <td style={{ color: '#d1d1d1', paddingBottom: '8px' }}>{activeDetails.director || series.director}</td>
                               </tr>
                               <tr>
                                 <td style={{ color: '#fff', fontWeight: 'bold', paddingRight: '20px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>Reparto:</td>
-                                <td style={{ color: '#d1d1d1' }}>{series.cast}</td>
+                                <td style={{ color: '#d1d1d1' }}>{activeDetails.cast || series.cast}</td>
                               </tr>
                             </tbody>
                           </table>
