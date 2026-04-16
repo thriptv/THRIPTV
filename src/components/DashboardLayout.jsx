@@ -278,6 +278,19 @@ const formatRating = (ratingStr) => {
   return num.toFixed(1);
 };
 
+const translateToSpanish = async (text) => {
+  if (!text || text.length < 3 || text === 'N/A') return text;
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=es&dt=t&q=${encodeURIComponent(text)}`;
+    const res = await fetch(url);
+    const result = await res.json();
+    return result[0].map(item => item[0]).join('');
+  } catch (error) {
+    console.warn("Translation failed", error);
+    return text;
+  }
+};
+
 const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }) => {
   const tr = translations[appLanguage] || translations.es;
 
@@ -354,14 +367,16 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
             })
           })
           .then(res => res.json())
-          .then(data => {
+          .then(async data => {
             if (data && data.info) {
+              const rawPlot = data.info.plot || data.info.description || m.synopsis;
+              const translatedPlot = rawPlot ? await translateToSpanish(rawPlot) : rawPlot;
               setMovieDetails(prev => ({
                 ...prev,
                 [selectedMovieId]: {
                   director: data.info.director || m.director,
                   cast: data.info.cast || data.info.actors || m.cast,
-                  synopsis: data.info.plot || data.info.description || m.synopsis,
+                  synopsis: translatedPlot,
                   imdb: data.info.rating || data.info.rating_5based || m.imdb,
                   year: data.info.year || data.info.released || m.year,
                   genre: data.info.genre || m.genre
@@ -396,9 +411,12 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
             })
           })
           .then(res => res.json())
-          .then(data => {
+          .then(async data => {
             if (data) {
               const info = data.info || {};
+              const rawPlot = info.plot || info.description || s.synopsis;
+              const translatedPlot = rawPlot ? await translateToSpanish(rawPlot) : rawPlot;
+              
               let extractedSeasons = [];
               if (data.episodes && typeof data.episodes === 'object') {
                 Object.keys(data.episodes).forEach(seasonNum => {
@@ -426,7 +444,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                 [selectedSeriesId]: {
                   director: info.director || s.director,
                   cast: info.cast || info.actors || s.cast,
-                  synopsis: info.plot || info.description || s.synopsis,
+                  synopsis: translatedPlot,
                   imdb: info.rating || info.rating_5based || s.imdb,
                   year: info.year || info.releaseDate || s.year,
                   genre: info.genre || s.genre,
