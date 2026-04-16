@@ -325,14 +325,14 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
 
             <div className="controls-right">
               <button 
-                className="player-icon-btn with-label" 
+                className="player-icon-btn" 
                 onClick={(e) => { 
                   e.stopPropagation(); 
                   setActiveMenu(activeMenu ? null : 'settings');
                 }}
+                title="Ajustes"
               >
-                <Settings size={22} />
-                <span>Ajustes</span>
+                <Settings size={24} />
               </button>
 
               <button className="player-icon-btn" onClick={toggleFullscreen}>
