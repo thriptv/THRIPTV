@@ -53,7 +53,7 @@ app.post('/api/sports/schedule', (req, res) => {
   const newEvent = {
     id: `match-live-${Date.now()}`,
     sportType: 'football',
-    title: `${event.homeTeam || 'Local'} vs ${event.awayTeam || 'Visitante'}`,
+    title: `${event.homeTeam || 'Local'} - ${event.awayTeam || 'Visitante'}`,
     time: event.time || '20:00',
     day: event.day || '',
     tournament: event.tournament || 'Campeonato',

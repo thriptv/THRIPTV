@@ -733,7 +733,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           </div>
 
                           <div className="match-teams-col" style={{ position: 'relative', zIndex: 1, flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 15px' }}>
-                            <span style={{ color: 'white', fontWeight: '800', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '1px', margin: 0, padding: 0 }}>{match.title}</span>
+                            <span style={{ color: 'white', fontWeight: '800', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '1px', margin: 0, padding: 0 }}>{(match.title || '').replace(/\s+vs\s+/gi, ' - ')}</span>
                           </div>
 
                           <div className="match-action-col" style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', minWidth: '100px' }}>
