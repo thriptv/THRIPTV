@@ -1017,7 +1017,7 @@
   .movie-detail-poster-container {
     width: 220px !important;
     height: 330px !important;
-    margin: 0 auto;
+    margin: 0;
   }
 
   .movie-detail-title {
