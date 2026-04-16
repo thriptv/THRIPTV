@@ -116,10 +116,15 @@ const LoginScreen = ({ onLogin, appLanguage }) => {
 
   return (
     <div className="login-container fade-in">
-      {/* SECCIÓN DEL LOGO OFICIAL */}
-      <div className="logo-section" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '15px' }}>
-        <img src="/Logo.png" alt="THRIPTV Oficial Logo" style={{ maxWidth: '300px', maxHeight: '140px', objectFit: 'contain', marginBottom: '10px' }} />
-        <p className="subtitle" style={{ opacity: 0.8 }}>{t.selectMode}</p>
+      {/* SECCIÓN DEL LOGO Y MARCA */}
+      <div className="logo-section">
+        <div className="img-logo-circle">
+          <img src="/Logo.png" alt="THRIPTV Logo" className="logo-image" style={{ objectFit: 'contain' }} />
+        </div>
+        <h1 className="brand-text">
+          THR<span>IPTV</span>
+        </h1>
+        <p className="subtitle">{t.selectMode}</p>
       </div>
 
       {/* TARJETA DEL FORMULARIO */}
