@@ -758,26 +758,24 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                         <div key={match.id} className="sports-match-row manual-sports-card" onClick={() => setSelectedMatchId(match.id)} style={{ position: 'relative', overflow: 'hidden', minHeight: '120px', width: '100%', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', transition: 'transform 0.2s', display: 'flex', alignItems: 'center', padding: '15px 25px 15px 15px' }}>
                           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: `linear-gradient(to right, rgba(15,15,15,0.95) 20%, rgba(15,15,15,0.8) 100%), url(${match.bgImage || ''})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.6, zIndex: 0 }} className="sports-bg-layer"></div>
                           
-                          <div className="match-time-col" style={{ position: 'relative', zIndex: 1, minWidth: '95px', marginLeft: '0px', paddingLeft: '0px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
-                            <span className="match-time-main" style={{ color: 'var(--primary-red)', fontSize: '26px', fontWeight: '900', textShadow: '0 2px 4px rgba(0,0,0,0.8)', margin: 0, padding: 0 }}>{showHora}</span>
-                            {showDia && <span className="match-time-sub" style={{ color: 'white', fontWeight: '600', marginTop: '2px', fontSize: '13px', textTransform: 'uppercase', margin: 0, padding: 0 }}>{showDia}</span>}
+                          <div className="match-time-col" style={{ position: 'relative', zIndex: 1, minWidth: '80px', marginLeft: '0px', paddingLeft: '0px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', textAlign: 'left' }}>
+                            <span className="match-time-main" style={{ color: 'var(--primary-red)', fontSize: '26px', fontWeight: '900', textShadow: '0 2px 4px rgba(0,0,0,0.8)', margin: 0, padding: 0, lineHeight: 1 }}>{showHora}</span>
+                            {showDia && <span className="match-time-sub" style={{ color: 'white', fontWeight: '600', marginTop: '4px', fontSize: '13px', textTransform: 'uppercase', margin: 0, padding: 0, lineHeight: 1 }}>{showDia}</span>}
                           </div>
                           
-                          <div className="match-teams-col" style={{ position: 'relative', zIndex: 1, flex: 1, gap: '20px', justifyContent: 'center' }}>
+                          <div className="match-teams-col" style={{ position: 'relative', zIndex: 1, flex: 1, gap: '10px', justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
                             
                             {/* Equipo Local */}
-                            <div className="match-team" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                              <img src={match.team1} alt={t1} onError={(e)=>{e.target.style.display='none'}} style={{ width: '55px', height: '55px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
-                              <span style={{ fontSize: '15px', fontWeight: 'bold', color: 'white', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{t1 || 'Local'}</span>
+                            <div className="match-team" style={{ display: 'flex', alignItems: 'center' }}>
+                              <img src={match.team1} alt={t1} onError={(e)=>{e.target.style.display='none'}} style={{ width: '60px', height: '60px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
                             </div>
                             
                             {/* VS */}
-                            <span className="match-vs" style={{ fontSize: '22px', fontStyle: 'italic', fontWeight: '900', color: 'white' }}>VS</span>
+                            <span className="match-vs" style={{ fontSize: '20px', fontStyle: 'italic', fontWeight: '900', color: 'white', margin: '0 10px' }}>VS</span>
                             
                             {/* Equipo Visitante */}
-                            <div className="match-team right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                              <img src={match.team2} alt={t2} onError={(e)=>{e.target.style.display='none'}} style={{ width: '55px', height: '55px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
-                              <span style={{ fontSize: '15px', fontWeight: 'bold', color: 'white', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{t2 || 'Visitante'}</span>
+                            <div className="match-team right" style={{ display: 'flex', alignItems: 'center' }}>
+                              <img src={match.team2} alt={t2} onError={(e)=>{e.target.style.display='none'}} style={{ width: '60px', height: '60px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
                             </div>
 
                           </div>
