@@ -1015,8 +1015,9 @@
   }
   
   .movie-detail-poster-container {
-    width: 220px !important;
-    height: 330px !important;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 2 / 3;
     margin: 0;
   }
 
