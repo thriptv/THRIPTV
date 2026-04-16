@@ -729,12 +729,11 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
               <div className="home-section" style={{ marginTop: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
                   <h3 className="section-title" style={{ fontSize: '24px', margin: 0, fontWeight: '700', color: 'white' }}>
-                    Eventos Destacados
+                    Partidos Destacados:
                   </h3>
-                  <div style={{ background: 'var(--primary-red)', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold', color: 'white', letterSpacing: '1px' }}>LIVE</div>
                 </div>
 
-                <div className="sports-agenda-board fade-in scroll-area-x" style={{ background: 'transparent', border: 'none', padding: 0, display: 'flex', gap: '20px', overflowX: 'auto', paddingBottom: '20px' }}>
+                <div className="sports-agenda-board fade-in sports-desktop-scroll scroll-area" style={{ background: 'transparent', border: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '15px', overflowY: 'auto' }}>
                   {(!liveSchedule || liveSchedule.length === 0) ? (
                     <div style={{ textAlign: 'center', padding: '40px', color: '#888', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', width: '100%' }}>
                       <p>No hay eventos premium programados para hoy.</p>
@@ -742,30 +741,51 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                   ) : (
                     liveSchedule.map((match, idx) => {
                       const [t1, t2] = match.title.split(' vs ');
+                      
+                      // Extraer dia y hora (ej: "HOY 21:00" -> dia "HOY", hora "21:00")
+                      const timeParts = match.time.split(' ');
+                      let showHora = '';
+                      let showDia = '';
+                      if (timeParts.length > 1) {
+                         showHora = timeParts.pop();
+                         showDia = timeParts.join(' ');
+                      } else {
+                         // Fallback si admin puso solo "21:00"
+                         showHora = match.time;
+                         showDia = match.tournament;
+                      }
+
                       return (
-                        <div key={match.id} className="sports-match-row manual-sports-card" onClick={() => setSelectedMatchId(match.id)} style={{ position: 'relative', overflow: 'hidden', minHeight: '120px', minWidth: 'min(450px, 85vw)', flex: '0 0 auto', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', transition: 'transform 0.2s', display: 'flex', alignItems: 'center', padding: '20px' }}>
-                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: `linear-gradient(to right, rgba(15,15,15,0.95) 20%, rgba(15,15,15,0.7) 100%), url(${match.bgImage || ''})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.6, zIndex: 0 }} className="sports-bg-layer"></div>
+                        <div key={match.id} className="sports-match-row manual-sports-card" onClick={() => setSelectedMatchId(match.id)} style={{ position: 'relative', overflow: 'hidden', minHeight: '120px', width: '100%', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', transition: 'transform 0.2s', display: 'flex', alignItems: 'center', padding: '15px 25px' }}>
+                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: `linear-gradient(to right, rgba(15,15,15,0.95) 20%, rgba(15,15,15,0.8) 100%), url(${match.bgImage || ''})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.6, zIndex: 0 }} className="sports-bg-layer"></div>
                           
-                          <div className="match-time-col" style={{ position: 'relative', zIndex: 1, minWidth: '120px' }}>
-                            <span className="match-time-main" style={{ color: '#f1c40f', fontSize: '22px', fontWeight: '800' }}>{match.time}</span>
-                            <span className="match-time-sub" style={{ background: 'rgba(255,255,255,0.1)', padding: '4px 10px', borderRadius: '6px', marginTop: '6px', display: 'inline-block', fontSize: '12px' }}>{match.tournament}</span>
+                          <div className="match-time-col" style={{ position: 'relative', zIndex: 1, minWidth: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <span className="match-time-main" style={{ color: '#e74c3c', fontSize: '26px', fontWeight: '900', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{showHora}</span>
+                            <span className="match-time-sub" style={{ color: 'white', fontWeight: '600', marginTop: '4px', fontSize: '13px', textTransform: 'uppercase' }}>{showDia !== match.tournament ? showDia : match.tournament}</span>
                           </div>
                           
-                          <div className="match-teams-col" style={{ position: 'relative', zIndex: 1, flex: 1, gap: '30px', justifyContent: 'center' }}>
-                            <div className="match-team" style={{ justifyContent: 'flex-end', textAlign: 'right', gap: '15px' }}>
-                              <span style={{ fontSize: '18px', fontWeight: 'bold', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{t1 || 'Local'}</span>
-                              <img src={match.team1} alt={t1} onError={(e)=>{e.target.style.display='none'}} style={{ width: '50px', height: '50px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
+                          <div className="match-teams-col" style={{ position: 'relative', zIndex: 1, flex: 1, gap: '20px', justifyContent: 'center' }}>
+                            
+                            {/* Equipo Local */}
+                            <div className="match-team" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                              <img src={match.team1} alt={t1} onError={(e)=>{e.target.style.display='none'}} style={{ width: '55px', height: '55px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
+                              <span style={{ fontSize: '15px', fontWeight: 'bold', color: 'white', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{t1 || 'Local'}</span>
                             </div>
-                            <span className="match-vs" style={{ fontSize: '24px', opacity: 0.5, fontStyle: 'italic', fontWeight: '900' }}>VS</span>
-                            <div className="match-team right" style={{ gap: '15px' }}>
-                              <img src={match.team2} alt={t2} onError={(e)=>{e.target.style.display='none'}} style={{ width: '50px', height: '50px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
-                              <span style={{ fontSize: '18px', fontWeight: 'bold', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{t2 || 'Visitante'}</span>
+                            
+                            {/* VS */}
+                            <span className="match-vs" style={{ fontSize: '22px', fontStyle: 'italic', fontWeight: '900', color: 'white' }}>VS</span>
+                            
+                            {/* Equipo Visitante */}
+                            <div className="match-team right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                              <img src={match.team2} alt={t2} onError={(e)=>{e.target.style.display='none'}} style={{ width: '55px', height: '55px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
+                              <span style={{ fontSize: '15px', fontWeight: 'bold', color: 'white', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{t2 || 'Visitante'}</span>
                             </div>
+
                           </div>
 
-                          <div className="match-action-col" style={{ position: 'relative', zIndex: 1 }}>
-                            <button className="premium-btn" onClick={(e) => { e.stopPropagation(); setSelectedMatchId(match.id); }} style={{ background: 'var(--primary-red)', padding: '12px 24px', fontSize: '14px', fontWeight: 'bold', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', boxShadow: '0 4px 15px rgba(217, 30, 24, 0.4)' }}>
-                                Sintonizar
+                          <div className="match-action-col" style={{ position: 'relative', zIndex: 1, minWidth: '120px', textAlign: 'right' }}>
+                            <button className="premium-btn" onClick={(e) => { e.stopPropagation(); setSelectedMatchId(match.id); }} style={{ background: 'var(--primary-red)', padding: '10px 24px', fontSize: '15px', fontWeight: 'bold', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', boxShadow: '0 4px 15px rgba(217, 30, 24, 0.4)' }}>
+                                Ver
                             </button>
                           </div>
                         </div>

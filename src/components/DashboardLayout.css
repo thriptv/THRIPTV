@@ -2242,3 +2242,12 @@ input:checked + .slider:before {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
+
+/* Limitar visual de agenda deportiva en desktop para scroll interno */
+@media (min-width: 768px) {
+  .sports-desktop-scroll {
+    max-height: 720px;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+}
