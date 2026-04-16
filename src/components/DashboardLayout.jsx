@@ -760,7 +760,6 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           
                           <div className="match-time-col" style={{ position: 'relative', zIndex: 1, minWidth: '80px', marginLeft: '0px', paddingLeft: '0px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', textAlign: 'left' }}>
                             <span className="match-time-main" style={{ color: 'var(--primary-red)', fontSize: '26px', fontWeight: '900', textShadow: '0 2px 4px rgba(0,0,0,0.8)', margin: 0, padding: 0, lineHeight: 1 }}>{showHora}</span>
-                            {showDia && <span className="match-time-sub" style={{ color: 'white', fontWeight: '600', marginTop: '4px', fontSize: '13px', textTransform: 'uppercase', margin: 0, padding: 0, lineHeight: 1 }}>{showDia}</span>}
                           </div>
                           
                           <div className="match-teams-col" style={{ position: 'relative', zIndex: 1, flex: 1, justifyContent: 'center', alignItems: 'center', display: 'flex', width: '100%', margin: '0 10px' }}>
@@ -770,9 +769,9 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                               <img src={match.team1} alt={t1} onError={(e)=>{e.target.style.display='none'}} style={{ width: '65px', height: '65px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
                             </div>
                             
-                            {/* VS */}
-                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: '40px' }}>
-                              <span className="match-vs" style={{ fontSize: '22px', fontStyle: 'italic', fontWeight: '900', color: 'white', margin: 0, padding: 0 }}>VS</span>
+                            {/* DIA CENTRAL (Reemplaza a VS) */}
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: '40px', padding: '0 10px' }}>
+                              <span className="match-vs" style={{ fontSize: '16px', fontWeight: '900', color: 'rgba(255,255,255,0.85)', margin: 0, padding: 0, textTransform: 'uppercase', letterSpacing: '1px' }}>{showDia ? showDia : 'VS'}</span>
                             </div>
                             
                             {/* Equipo Visitante */}
