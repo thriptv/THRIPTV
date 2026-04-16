@@ -1010,20 +1010,20 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
               return (
                 <div className="movie-detail-wrapper">
                   <div className="movie-detail-content scroll-area">
-                    <button className="btn-back" onClick={() => setSelectedMovieId(null)} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', padding: '8px 16px', borderRadius: '24px', display: 'flex', alignItems: 'center', gap: '8px', color: '#fff', fontSize: '15px', fontWeight: '600', marginBottom: '24px', cursor: 'pointer' }}>
-                      <ArrowLeft size={18} /> Volver
+                    <button className="btn-back" onClick={() => setSelectedMovieId(null)} style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.08)', padding: '8px 16px', borderRadius: '24px', display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#fff', fontSize: '14px', fontWeight: 'bold', marginBottom: '35px', cursor: 'pointer', outline: 'none' }}>
+                      <ArrowLeft size={16} /> Volver
                     </button>
 
                     <div className="movie-detail-grid layout">
                       <div className="movie-detail-poster-container fade-in-up">
-                        {/* Star Button Moved to top right of poster container - actually let's use top-left to be consistent with grid */}
                         <Star 
-                          size={32} 
+                          size={28} 
                           className={`star-icon-movie pos-top-left ${isFav ? 'favorited' : ''}`} 
                           onClick={(e) => { e.stopPropagation(); toggleFavorite(e, movie.id); }}
-                          fill={isFav ? '#f1c40f' : 'rgba(0,0,0,0.6)'}
-                          color={isFav ? '#f1c40f' : 'rgba(255,255,255,0.8)'}
-                          style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 10, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.8))', cursor: 'pointer' }}
+                          fill={isFav ? '#f1c40f' : 'transparent'}
+                          color={isFav ? '#f1c40f' : 'rgba(255,255,255,0.6)'}
+                          strokeWidth={2}
+                          style={{ position: 'absolute', top: '12px', left: '12px', zIndex: 10, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.8))', cursor: 'pointer' }}
                         />
 
                         <img 
@@ -1041,36 +1041,38 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       </div>
                       
                       <div className="movie-detail-info fade-in-up" style={{ animationDelay: '0.1s' }}>
-                        <h2 className="movie-detail-title" style={{ fontSize: '38px', fontWeight: '800', textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '0.5px' }}>
+                        <h2 className="movie-detail-title" style={{ fontSize: '36px', fontWeight: '800', fontFamily: 'system-ui, -apple-system, sans-serif', textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '0.5px', color: '#fff' }}>
                           {cleanTitle(movie.title)}
                         </h2>
                         
-                        <div className="movie-detail-meta" style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '24px' }}>
-                          <span style={{ background: '#ffc107', color: '#000', fontWeight: '800', padding: '4px 16px', borderRadius: '6px', fontSize: '16px' }}>
+                        <div className="movie-detail-meta" style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '24px' }}>
+                          <span style={{ background: '#ffb400', color: '#000', fontWeight: 'bold', padding: '4px 12px', borderRadius: '4px', fontSize: '15px' }}>
                             {movieDetails[movie.id]?.imdb || movie.imdb || 'N/A'}
                           </span>
-                          <span style={{ background: '#cc0000', color: '#fff', fontWeight: '800', padding: '4px 16px', borderRadius: '6px', fontSize: '16px' }}>
+                          <span style={{ background: '#d32f2f', color: '#fff', fontWeight: 'bold', padding: '4px 12px', borderRadius: '4px', fontSize: '15px' }}>
                             {movieDetails[movie.id]?.year || movie.year || 'N/A'}
                           </span>
                         </div>
 
-                        <p className="movie-detail-synopsis" style={{ fontSize: '16px', lineHeight: '1.6', color: '#ccc', marginBottom: '25px', maxWidth: '800px' }}>
+                        <p className="movie-detail-synopsis" style={{ fontSize: '16px', lineHeight: '1.6', color: '#d1d1d1', marginBottom: '25px', maxWidth: '650px' }}>
                           {movieDetails[movie.id]?.synopsis || movie.synopsis}
                         </p>
 
-                        <div className="movie-detail-crew" style={{ color: '#ccc', fontSize: '15px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '30px' }}>
-                          <p style={{ margin: 0, display: 'flex' }}>
-                            <strong style={{ color: '#fff', width: '80px', flexShrink: 0 }}>{tr.movieDetail.director}:</strong> 
-                            <span>{movieDetails[movie.id]?.director || movie.director}</span>
-                          </p>
-                          <p style={{ margin: 0, display: 'flex' }}>
-                            <strong style={{ color: '#fff', width: '80px', flexShrink: 0 }}>{tr.movieDetail.cast}:</strong> 
-                            <span>{movieDetails[movie.id]?.cast || movie.cast}</span>
-                          </p>
-                        </div>
+                        <table className="movie-detail-crew-table" style={{ fontSize: '15px', borderCollapse: 'collapse', marginBottom: '35px' }}>
+                          <tbody>
+                            <tr>
+                              <td style={{ color: '#fff', fontWeight: 'bold', paddingRight: '20px', paddingBottom: '8px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>Director:</td>
+                              <td style={{ color: '#d1d1d1', paddingBottom: '8px' }}>{movieDetails[movie.id]?.director || movie.director}</td>
+                            </tr>
+                            <tr>
+                              <td style={{ color: '#fff', fontWeight: 'bold', paddingRight: '20px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>Reparto:</td>
+                              <td style={{ color: '#d1d1d1' }}>{movieDetails[movie.id]?.cast || movie.cast}</td>
+                            </tr>
+                          </tbody>
+                        </table>
 
                         <div className="movie-detail-actions">
-                          <button className="btn-play-movie" onClick={() => setPlayingMedia(movie)} style={{ background: '#cc0000', color: '#fff', border: 'none', padding: '14px 28px', borderRadius: '30px', fontSize: '16px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', transition: 'transform 0.2s', boxShadow: '0 4px 15px rgba(204,0,0,0.4)' }}>
+                          <button className="btn-play-movie" onClick={() => setPlayingMedia(movie)} style={{ background: '#cc0000', color: '#fff', border: 'none', padding: '12px 26px', borderRadius: '30px', fontSize: '16px', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
                             <Play size={20} fill="currentColor" /> Reproducir
                           </button>
                         </div>
@@ -1200,20 +1202,20 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
               return (
                 <div className="movie-detail-wrapper">
                   <div className="movie-detail-content scroll-area">
-                    <button className="btn-back" onClick={() => setSelectedSeriesId(null)} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', padding: '8px 16px', borderRadius: '24px', display: 'flex', alignItems: 'center', gap: '8px', color: '#fff', fontSize: '15px', fontWeight: '600', marginBottom: '24px', cursor: 'pointer' }}>
-                      <ArrowLeft size={18} /> Volver
+                    <button className="btn-back" onClick={() => setSelectedSeriesId(null)} style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.08)', padding: '8px 16px', borderRadius: '24px', display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#fff', fontSize: '14px', fontWeight: 'bold', marginBottom: '35px', cursor: 'pointer', outline: 'none' }}>
+                      <ArrowLeft size={16} /> Volver
                     </button>
 
                     <div className="series-detail-header fade-in-up">
                         <div className="movie-detail-poster-container">
-                          {/* Star Button */}
                           <Star 
-                            size={32} 
+                            size={28} 
                             className={`star-icon-movie pos-top-left ${isFav ? 'favorited' : ''}`} 
                             onClick={(e) => { e.stopPropagation(); toggleFavorite(e, series.id); }}
-                            fill={isFav ? '#f1c40f' : 'rgba(0,0,0,0.6)'}
-                            color={isFav ? '#f1c40f' : 'rgba(255,255,255,0.8)'}
-                            style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 10, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.8))', cursor: 'pointer' }}
+                            fill={isFav ? '#f1c40f' : 'transparent'}
+                            color={isFav ? '#f1c40f' : 'rgba(255,255,255,0.6)'}
+                            strokeWidth={2}
+                            style={{ position: 'absolute', top: '12px', left: '12px', zIndex: 10, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.8))', cursor: 'pointer' }}
                           />
 
                           <img 
@@ -1228,30 +1230,35 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                         </div>
 
                         <div className="movie-detail-info">
-                          <h2 className="movie-detail-title" style={{ fontSize: '38px', fontWeight: '800', textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '0.5px' }}>
+                          <h2 className="movie-detail-title" style={{ fontSize: '36px', fontWeight: '800', fontFamily: 'system-ui, -apple-system, sans-serif', textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '0.5px', color: '#fff' }}>
                             {cleanTitle(series.title)}
                           </h2>
                           
-                          <div className="movie-detail-meta" style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '24px' }}>
-                            <span style={{ background: '#ffc107', color: '#000', fontWeight: '800', padding: '4px 16px', borderRadius: '6px', fontSize: '16px' }}>
+                          <div className="movie-detail-meta" style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '24px' }}>
+                            <span style={{ background: '#ffb400', color: '#000', fontWeight: 'bold', padding: '4px 12px', borderRadius: '4px', fontSize: '15px' }}>
                               {series.imdb !== 'N/A' ? series.imdb : 'N/A'}
                             </span>
-                            <span style={{ background: '#cc0000', color: '#fff', fontWeight: '800', padding: '4px 16px', borderRadius: '6px', fontSize: '16px' }}>
+                            <span style={{ background: '#d32f2f', color: '#fff', fontWeight: 'bold', padding: '4px 12px', borderRadius: '4px', fontSize: '15px' }}>
                               {series.year || 'N/A'}
                             </span>
                           </div>
 
-                          <p className="movie-detail-synopsis" style={{ fontSize: '16px', lineHeight: '1.6', color: '#ccc', marginBottom: '25px', maxWidth: '800px' }}>{series.synopsis}</p>
-                          <div className="movie-detail-crew" style={{ color: '#ccc', fontSize: '15px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '30px' }}>
-                            <p style={{ margin: 0, display: 'flex' }}>
-                              <strong style={{ color: '#fff', width: '80px', flexShrink: 0 }}>{tr.movieDetail.director}:</strong> 
-                              <span>{series.director}</span>
-                            </p>
-                            <p style={{ margin: 0, display: 'flex' }}>
-                              <strong style={{ color: '#fff', width: '80px', flexShrink: 0 }}>{tr.movieDetail.cast}:</strong> 
-                              <span>{series.cast}</span>
-                            </p>
-                          </div>
+                          <p className="movie-detail-synopsis" style={{ fontSize: '16px', lineHeight: '1.6', color: '#d1d1d1', marginBottom: '25px', maxWidth: '650px' }}>
+                            {series.synopsis}
+                          </p>
+
+                          <table className="movie-detail-crew-table" style={{ fontSize: '15px', borderCollapse: 'collapse', marginBottom: '35px' }}>
+                            <tbody>
+                              <tr>
+                                <td style={{ color: '#fff', fontWeight: 'bold', paddingRight: '20px', paddingBottom: '8px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>Director:</td>
+                                <td style={{ color: '#d1d1d1', paddingBottom: '8px' }}>{series.director}</td>
+                              </tr>
+                              <tr>
+                                <td style={{ color: '#fff', fontWeight: 'bold', paddingRight: '20px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>Reparto:</td>
+                                <td style={{ color: '#d1d1d1' }}>{series.cast}</td>
+                              </tr>
+                            </tbody>
+                          </table>
                         </div>
                     </div>
 
