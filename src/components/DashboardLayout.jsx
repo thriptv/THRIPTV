@@ -1091,6 +1091,20 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       </div>
                     </div>
 
+                    <div className="movie-similar-section fade-in-up" style={{ marginTop: '50px', width: '100%', paddingBottom: '30px' }}>
+                      <h3 style={{ color: '#fff', fontSize: '20px', marginBottom: '20px', fontWeight: 'bold' }}>Películas parecidas:</h3>
+                      <div className="similar-movies-row scroll-area-x" style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '20px' }}>
+                        {MOCK_MOVIES.filter(m => m.groupId === movie.groupId && m.id !== movie.id).slice(0, 10).map(similar => (
+                          <div key={similar.id} className="similar-movie-card" onClick={(e) => { e.stopPropagation(); setSelectedMovieId(similar.id); }} style={{ width: '140px', flexShrink: 0, cursor: 'pointer', transition: 'transform 0.2s' }}>
+                            <img src={fixedPosters[similar.id] || similar.poster} alt={similar.title} style={{ width: '100%', height: '210px', objectFit: 'cover', borderRadius: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.5)' }} onError={(e) => { e.target.src = 'https://placehold.co/300x450/101010/FFF.png?text=Sin+Portada'; }} />
+                            <p style={{ color: '#fff', fontSize: '13px', marginTop: '8px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: '600', textAlign: 'center', margin: 0 }}>
+                              {cleanTitle(similar.title)}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               );
@@ -1299,6 +1313,20 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                               <p className="episode-synopsis">{ep.synopsis}</p>
                               <span className="episode-duration">{ep.duration}</span>
                             </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="movie-similar-section fade-in-up" style={{ marginTop: '50px', width: '100%', paddingBottom: '30px' }}>
+                      <h3 style={{ color: '#fff', fontSize: '20px', marginBottom: '20px', fontWeight: 'bold' }}>Series parecidas:</h3>
+                      <div className="similar-movies-row scroll-area-x" style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '20px' }}>
+                        {MOCK_SERIES.filter(s => s.groupId === series.groupId && s.id !== series.id).slice(0, 10).map(similar => (
+                          <div key={similar.id} className="similar-movie-card" onClick={(e) => { e.stopPropagation(); setSelectedSeriesId(similar.id); }} style={{ width: '140px', flexShrink: 0, cursor: 'pointer', transition: 'transform 0.2s' }}>
+                            <img src={fixedPosters[similar.id] || similar.poster} alt={similar.title} style={{ width: '100%', height: '210px', objectFit: 'cover', borderRadius: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.5)' }} onError={(e) => { e.target.src = 'https://placehold.co/300x450/101010/FFF.png?text=Sin+Portada'; }} />
+                            <p style={{ color: '#fff', fontSize: '13px', marginTop: '8px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: '600', textAlign: 'center', margin: 0 }}>
+                              {cleanTitle(similar.title)}
+                            </p>
                           </div>
                         ))}
                       </div>
