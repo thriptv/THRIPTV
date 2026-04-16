@@ -760,7 +760,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           
                           <div className="match-time-col" style={{ position: 'relative', zIndex: 1, minWidth: '150px', marginLeft: '0px', paddingLeft: '0px', display: 'flex', flexDirection: 'row', alignItems: 'baseline', justifyContent: 'flex-start', textAlign: 'left', gap: '8px' }}>
                             <span className="match-time-main" style={{ color: 'var(--primary-red)', fontSize: '26px', fontWeight: '900', textShadow: '0 2px 4px rgba(0,0,0,0.8)', margin: 0, padding: 0, lineHeight: 1 }}>{showHora}</span>
-                            {(showDia || match.tournament) && <span className="match-time-sub" style={{ color: 'white', fontWeight: '800', fontSize: '16px', textTransform: 'uppercase', margin: 0, padding: 0, lineHeight: 1, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{showDia || match.tournament}</span>}
+                            {showDia && <span className="match-time-sub" style={{ color: 'white', fontWeight: '800', fontSize: '16px', textTransform: 'uppercase', margin: 0, padding: 0, lineHeight: 1, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{showDia}</span>}
                           </div>
                           
                           <div className="match-teams-col" style={{ position: 'relative', zIndex: 1, flex: 1, justifyContent: 'center', alignItems: 'center', display: 'flex', width: '100%', margin: '0 10px' }}>
