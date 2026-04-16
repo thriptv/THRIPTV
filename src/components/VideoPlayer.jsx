@@ -31,9 +31,9 @@ const VideoPlayer = ({ media, onClose }) => {
   const [activeMenu, setActiveMenu] = useState(null); // 'audio' | 'subtitles' | null
 
   // Mock Tracks
-  const audioTracks = ['Español (Latino)', 'Español (España)', 'Inglés (Original)', 'Inglés (Audio Descriptivo)'];
-  const subtitleTracks = ['Apagado', 'Español (CC)', 'Inglés'];
-  const [selectedAudio, setSelectedAudio] = useState('Español (Latino)');
+  const audioTracks = ['Español', 'Inglés'];
+  const subtitleTracks = ['Apagado', 'Español', 'Inglés'];
+  const [selectedAudio, setSelectedAudio] = useState('Español');
   const [selectedSubtitle, setSelectedSubtitle] = useState('Apagado');
 
   useEffect(() => {
