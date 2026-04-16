@@ -271,6 +271,13 @@ const cleanTitle = (rawTitle) => {
   return clean;
 };
 
+const formatRating = (ratingStr) => {
+  if (!ratingStr || ratingStr === 'N/A') return 'N/A';
+  const num = parseFloat(ratingStr);
+  if (isNaN(num) || num === 0) return 'N/A';
+  return num.toFixed(1);
+};
+
 const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }) => {
   const tr = translations[appLanguage] || translations.es;
 
@@ -1055,7 +1062,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                         
                         <div className="movie-detail-meta" style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '24px' }}>
                           <span style={{ background: '#ffb400', color: '#000', fontWeight: 'bold', padding: '4px 12px', borderRadius: '4px', fontSize: '15px' }}>
-                            {movieDetails[movie.id]?.imdb || movie.imdb || 'N/A'}
+                            {formatRating(movieDetails[movie.id]?.imdb || movie.imdb)}
                           </span>
                           <span style={{ background: '#d32f2f', color: '#fff', fontWeight: 'bold', padding: '4px 12px', borderRadius: '4px', fontSize: '15px' }}>
                             {movieDetails[movie.id]?.year || movie.year || 'N/A'}
@@ -1244,7 +1251,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           
                           <div className="movie-detail-meta" style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '24px' }}>
                             <span style={{ background: '#ffb400', color: '#000', fontWeight: 'bold', padding: '4px 12px', borderRadius: '4px', fontSize: '15px' }}>
-                              {series.imdb !== 'N/A' ? series.imdb : 'N/A'}
+                              {formatRating(series.imdb)}
                             </span>
                             <span style={{ background: '#d32f2f', color: '#fff', fontWeight: 'bold', padding: '4px 12px', borderRadius: '4px', fontSize: '15px' }}>
                               {series.year || 'N/A'}
