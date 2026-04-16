@@ -13,7 +13,7 @@ const AdminPanel = () => {
   const [sportsList, setSportsList] = useState([]);
   const [sportForm, setSportForm] = useState({
     homeTeam: '', homeLogo: '', awayTeam: '', awayLogo: '',
-    time: '', tournament: '', tournamentLogo: '', channelsList: ''
+    day: '', time: '', tournament: '', tournamentLogo: '', channelsList: ''
   });
 
   const fetchCodes = async (pass) => {
@@ -63,7 +63,7 @@ const AdminPanel = () => {
       });
       if (resp.ok) {
         fetchSports();
-        setSportForm({ homeTeam: '', homeLogo: '', awayTeam: '', awayLogo: '', time: '', tournament: '', tournamentLogo: '', channelsList: '' });
+        setSportForm({ homeTeam: '', homeLogo: '', awayTeam: '', awayLogo: '', day: '', time: '', tournament: '', tournamentLogo: '', channelsList: '' });
       }
     } catch (err) { alert("Error"); }
   };
@@ -258,11 +258,18 @@ const AdminPanel = () => {
                     </div>
                   </div>
                   
-                  <div className="form-group row-group" style={{marginTop: '15px', gridTemplateColumns: '1fr 1fr 1fr'}}>
+                  <div className="form-group row-group" style={{marginTop: '15px'}}>
                     <div>
-                      <label>Hora y Fecha</label>
-                      <input type="text" className="admin-input" placeholder="ej. HOY 21:00" value={sportForm.time} onChange={e => setSportForm({...sportForm, time: e.target.value})} required />
+                      <label>Día de Partido</label>
+                      <input type="text" className="admin-input" placeholder="ej. HOY o DOMINGO" value={sportForm.day} onChange={e => setSportForm({...sportForm, day: e.target.value})} required />
                     </div>
+                    <div>
+                      <label>Hora Exacta</label>
+                      <input type="text" className="admin-input" placeholder="ej. 21:00" value={sportForm.time} onChange={e => setSportForm({...sportForm, time: e.target.value})} required />
+                    </div>
+                  </div>
+                  
+                  <div className="form-group row-group" style={{marginTop: '15px'}}>
                     <div>
                       <label>Competición / Torneo</label>
                       <input type="text" className="admin-input" placeholder="ej. LaLiga EA Sports" value={sportForm.tournament} onChange={e => setSportForm({...sportForm, tournament: e.target.value})} required />

@@ -705,15 +705,16 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       const timeMatch = timeStr.match(/\b\d{1,2}:\d{2}\b/);
                       
                       let showHora = '';
-                      let showDia = '';
+                      let showDia = match.day || '';
                       
                       if (timeMatch) {
                           // Extrae la hora exacta para la caja grande y deja lo demas abajo
                           showHora = timeMatch[0];
-                          showDia = timeStr.replace(timeMatch[0], '').trim();
+                          if (!showDia) {
+                              showDia = timeStr.replace(timeMatch[0], '').trim();
+                          }
                       } else {
                           showHora = timeStr;
-                          showDia = '';
                       }
                       
                       return (

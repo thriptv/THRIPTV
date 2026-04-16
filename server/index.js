@@ -55,6 +55,7 @@ app.post('/api/sports/schedule', (req, res) => {
     sportType: 'football',
     title: `${event.homeTeam || 'Local'} vs ${event.awayTeam || 'Visitante'}`,
     time: event.time || '20:00',
+    day: event.day || '',
     tournament: event.tournament || 'Campeonato',
     tournamentLogo: event.tournamentLogo || '',
     channelsList: event.channelsList || [], 
