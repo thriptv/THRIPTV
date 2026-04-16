@@ -585,8 +585,29 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
     return filtered;
   };
 
+  const getDisplayedSeries = () => {
+    let filtered = MOCK_SERIES;
+    if (activeCategory === 'fav') {
+      filtered = MOCK_SERIES.filter(s => favorites.includes(s.id));
+    } else if (activeCategory === 'hist') {
+      filtered = history.map(id => MOCK_SERIES.find(s => s.id === id)).filter(Boolean);
+    } else if (activeCategory !== 'all') {
+      filtered = MOCK_SERIES.filter(s => s.groupId === activeCategory);
+    }
+
+    if (activeGenre !== 'Todos') {
+      filtered = filtered.filter(s => s.genre && s.genre.toLowerCase().includes(activeGenre.toLowerCase()));
+    }
+
+    if (searchQuery.trim() !== '') {
+      filtered = filtered.filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()));
+    }
+    return filtered;
+  };
+
   const displayedChannels = getDisplayedChannels();
   const displayedMovies = getDisplayedMovies();
+  const displayedSeries = getDisplayedSeries();
 
   return (
     <div className="dashboard-container fade-in">
@@ -1443,7 +1464,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
             </div>
 
             <div className="movies-grid">
-               {MOCK_SERIES.map(series => {
+               {displayedSeries.map(series => {
                 const isFav = favorites.includes(series.id);
                 return (
                   <div key={series.id} className="movie-poster-card" onClick={() => { setSelectedSeriesId(series.id); setActiveSeason(1); }}>
