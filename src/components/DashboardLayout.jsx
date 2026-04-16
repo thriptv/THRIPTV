@@ -725,10 +725,15 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           <div className="match-info-fluid" style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '20px' }}>
                             <div className="match-time-col" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                               <span className="match-time-main" style={{ color: 'var(--primary-red)', fontSize: '22px', fontWeight: '900', margin: 0, padding: 0, textShadow: '0 2px 8px rgba(217, 30, 24, 0.6)' }}>{showHora}</span>
-                              {showDia && <span className="match-time-sub" style={{ color: 'white', fontWeight: '800', fontSize: '14px', textTransform: 'uppercase', margin: 0, padding: 0, opacity: 0.9 }}>{showDia}</span>}
                             </div>
+
+                            {showDia && (
+                              <div className="match-day-col" style={{ display: 'flex', alignItems: 'center', borderLeft: '1px solid rgba(255,255,255,0.05)', paddingLeft: '15px', marginLeft: '5px' }}>
+                                <span className="match-time-sub" style={{ color: 'white', fontWeight: '800', fontSize: '14px', textTransform: 'uppercase', margin: 0, padding: 0, opacity: 0.9 }}>{showDia}</span>
+                              </div>
+                            )}
                             
-                            <div className="match-tournament-col" style={{ display: 'flex', alignItems: 'center', gap: '8px', borderLeft: '1px solid rgba(255,255,255,0.05)', paddingLeft: '20px' }}>
+                            <div className="match-tournament-col" style={{ display: 'flex', alignItems: 'center', gap: '8px', borderLeft: '1px solid rgba(255,255,255,0.05)', paddingLeft: '15px', marginLeft: '5px' }}>
                               {match.tournamentLogo && <img src={match.tournamentLogo} alt="Torneo" style={{ width: '28px', height: '28px', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none'; }} />}
                               {match.tournament && <span className="match-time-sub" style={{ color: '#ff9800', fontWeight: '800', fontSize: '15px', textTransform: 'uppercase', margin: 0, padding: 0, letterSpacing: '1px', opacity: 0.9 }}>{match.tournament}</span>}
                             </div>
