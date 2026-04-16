@@ -329,33 +329,41 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
   useEffect(() => {
     if (selectedMovieId && !movieDetails[selectedMovieId]) {
       const m = MOCK_MOVIES.find(x => x.id === selectedMovieId);
-      if (m && m.title) {
-        // Limpiamos los títulos traídos desde las plataformas IPTV (ej: "ESP: Título (2023) [HD]") p/ OMDB
-        let cleanTitle = m.title;
-        if (cleanTitle.includes(': ')) {
-          cleanTitle = cleanTitle.substring(cleanTitle.indexOf(': ') + 2);
-        }
-        cleanTitle = cleanTitle.replace(/[\(\[].*?[\)\]]/g, '').trim();
-
-        fetch(`https://www.omdbapi.com/?apikey=trilogy&t=${encodeURIComponent(cleanTitle)}`)
+      if (m && m.id && m.id.startsWith('vod_')) {
+        const streamId = m.id.replace('vod_', '');
+        const xtUrl = localStorage.getItem('thriptv_xtUrl');
+        const xtUser = localStorage.getItem('thriptv_xtUser');
+        const xtPass = localStorage.getItem('thriptv_xtPass');
+        
+        if (xtUrl && xtUser && xtPass) {
+          fetch('/api/proxy/xtream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              url: xtUrl.replace(/\/+$/, ''), 
+              username: xtUser, 
+              password: xtPass, 
+              action: `get_vod_info&vod_id=${streamId}` 
+            })
+          })
           .then(res => res.json())
           .then(data => {
-            if (data.Response === 'True') {
+            if (data && data.info) {
               setMovieDetails(prev => ({
                 ...prev,
                 [selectedMovieId]: {
-                  director: data.Director !== 'N/A' ? data.Director : m.director,
-                  cast: data.Actors !== 'N/A' ? data.Actors : m.cast,
-                  synopsis: data.Plot !== 'N/A' ? data.Plot : m.synopsis,
-                  imdb: data.imdbRating !== 'N/A' ? data.imdbRating : m.imdb
+                  director: data.info.director || m.director,
+                  cast: data.info.cast || data.info.actors || m.cast,
+                  synopsis: data.info.plot || data.info.description || m.synopsis,
+                  imdb: data.info.rating || data.info.rating_5based || m.imdb,
+                  year: data.info.year || data.info.released || m.year,
+                  genre: data.info.genre || m.genre
                 }
               }));
-            } else {
-              // Intento Fallback con t= exact match por si la limpieza falló o no existe
-              console.log("No encontrado limpio en OMDb:", cleanTitle);
             }
           })
-          .catch(() => {});
+          .catch(e => console.error("Error obteniendo detalles VOD:", e));
+        }
       }
     }
   }, [selectedMovieId]);
