@@ -69,7 +69,7 @@ const AdminPanel = () => {
   };
 
   const handleDeleteEvent = async (id) => {
-    if (!window.confirm("¿Seguro que quieres borrar este partido?")) return;
+    // Alerta nativa retirada por bloqueos locales en el browser del usuario
     try {
       const resp = await fetch(`/api/sports/schedule/${id}`, {
         method: 'DELETE',
