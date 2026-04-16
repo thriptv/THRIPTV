@@ -1064,9 +1064,6 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           <span style={{ background: '#ffb400', color: '#000', fontWeight: 'bold', padding: '4px 12px', borderRadius: '4px', fontSize: '15px' }}>
                             {formatRating(movieDetails[movie.id]?.imdb || movie.imdb)}
                           </span>
-                          <span style={{ background: '#d32f2f', color: '#fff', fontWeight: 'bold', padding: '4px 12px', borderRadius: '4px', fontSize: '15px' }}>
-                            {movieDetails[movie.id]?.year || movie.year || 'N/A'}
-                          </span>
                         </div>
 
                         <p className="movie-detail-synopsis" style={{ fontSize: '16px', lineHeight: '1.6', color: '#d1d1d1', marginBottom: '25px', maxWidth: '650px' }}>
@@ -1252,9 +1249,6 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           <div className="movie-detail-meta" style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '24px' }}>
                             <span style={{ background: '#ffb400', color: '#000', fontWeight: 'bold', padding: '4px 12px', borderRadius: '4px', fontSize: '15px' }}>
                               {formatRating(series.imdb)}
-                            </span>
-                            <span style={{ background: '#d32f2f', color: '#fff', fontWeight: 'bold', padding: '4px 12px', borderRadius: '4px', fontSize: '15px' }}>
-                              {series.year || 'N/A'}
                             </span>
                           </div>
 
