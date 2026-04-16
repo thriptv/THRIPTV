@@ -750,18 +750,17 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                          showHora = timeParts.pop();
                          showDia = timeParts.join(' ');
                       } else {
-                         // Fallback si admin puso solo "21:00"
                          showHora = match.time;
-                         showDia = match.tournament;
+                         showDia = ''; // Estrictamente solo el día indicado por el admin
                       }
 
                       return (
                         <div key={match.id} className="sports-match-row manual-sports-card" onClick={() => setSelectedMatchId(match.id)} style={{ position: 'relative', overflow: 'hidden', minHeight: '120px', width: '100%', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', transition: 'transform 0.2s', display: 'flex', alignItems: 'center', padding: '15px 25px' }}>
                           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: `linear-gradient(to right, rgba(15,15,15,0.95) 20%, rgba(15,15,15,0.8) 100%), url(${match.bgImage || ''})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.6, zIndex: 0 }} className="sports-bg-layer"></div>
                           
-                          <div className="match-time-col" style={{ position: 'relative', zIndex: 1, minWidth: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                          <div className="match-time-col" style={{ position: 'relative', zIndex: 1, minWidth: '120px', marginLeft: '30px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <span className="match-time-main" style={{ color: '#e74c3c', fontSize: '26px', fontWeight: '900', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{showHora}</span>
-                            <span className="match-time-sub" style={{ color: 'white', fontWeight: '600', marginTop: '4px', fontSize: '13px', textTransform: 'uppercase' }}>{showDia !== match.tournament ? showDia : match.tournament}</span>
+                            {showDia && <span className="match-time-sub" style={{ color: 'white', fontWeight: '600', marginTop: '4px', fontSize: '13px', textTransform: 'uppercase' }}>{showDia}</span>}
                           </div>
                           
                           <div className="match-teams-col" style={{ position: 'relative', zIndex: 1, flex: 1, gap: '20px', justifyContent: 'center' }}>
