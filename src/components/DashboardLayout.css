@@ -1006,27 +1006,50 @@
 
 /* RESPONSIVE AJUSTES (Para móvil) */
 @media (max-width: 768px) {
-  .movie-detail-grid.layout {
+  .movie-detail-grid.layout,
+  .series-detail-header {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 30px;
+    gap: 20px !important;
   }
   
+  .movie-detail-poster-container {
+    width: 220px !important;
+    height: 330px !important;
+    margin: 0 auto;
+  }
+
   .movie-detail-title {
-    font-size: 36px;
+    font-size: 26px !important;
   }
   
   .movie-detail-meta {
     justify-content: center;
   }
   
+  .movie-detail-synopsis {
+    font-size: 15px !important;
+    text-align: center;
+  }
+
+  .movie-detail-crew-table {
+    margin: 0 auto 25px auto !important;
+  }
+
+  .movie-detail-crew-table td {
+    display: block;
+    text-align: center;
+    padding-right: 0 !important;
+    padding-bottom: 6px !important;
+  }
+
   .movie-detail-actions {
     justify-content: center;
   }
   
   .movie-detail-content {
-    padding: 20px;
+    padding: 15px;
   }
 }
 
