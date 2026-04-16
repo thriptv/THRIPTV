@@ -975,96 +975,48 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       <div className="movie-detail-info fade-in-up" style={{ animationDelay: '0.1s' }}>
                         
                         <div className="movie-detail-meta" style={{ gap: '14px', marginBottom: '32px' }}>
-                          <span className="meta-pill" style={{ background: 'var(--primary-red)', border: 'none', color: 'white', fontSize: '16px', padding: '10px 20px' }}>
-                            <Clock size={16} /> {match.time}
+                          <span className="meta-pill" style={{ background: 'var(--primary-red)', border: 'none', color: 'white', fontSize: '16px', padding: '10px 20px', fontWeight: '800' }}>
+                            {match.time}
                           </span>
-                          <span className="meta-pill outline" style={{ fontSize: '16px', padding: '10px 20px' }}>
-                            <Trophy size={16} style={{ marginRight: '6px' }} /> {match.tournament}
+                          {match.day && (
+                            <span className="meta-pill" style={{ background: '#f1c40f', border: 'none', color: 'white', fontSize: '16px', padding: '10px 20px', fontWeight: '800', textTransform: 'uppercase' }}>
+                              {match.day}
+                            </span>
+                          )}
+                          <span className="meta-pill outline" style={{ fontSize: '16px', padding: '10px 20px', fontWeight: '800', textTransform: 'uppercase', borderColor: 'rgba(255,255,255,0.2)' }}>
+                            {match.tournament}
                           </span>
                         </div>
 
                         <h3 style={{ marginBottom: '20px', fontSize: '22px', fontWeight: '500', color: '#fff' }}>{tr.movieDetail.whereToWatch}</h3>
                         
                         <div className="channels-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
-                          {(() => {
-                            const [t1Name, t2Name] = match.title.split(' vs ').map(t => t?.trim().toLowerCase() || '');
-                            
-                            // 1. Encontrar por EPG o palabras clave en el canal si el nombre de los equipos está allí
-                            const epgMatches = MOCK_CHANNELS.filter(ch => {
-                              const epgLower = (ch.epg || '').toLowerCase();
-                              const nameLower = (ch.name || '').toLowerCase();
-                              const match1 = t1Name && t1Name.length >= 3 && (epgLower.includes(t1Name) || nameLower.includes(t1Name));
-                              const match2 = t2Name && t2Name.length >= 3 && (epgLower.includes(t2Name) || nameLower.includes(t2Name));
-                              return match1 || match2;
-                            });
-
-                            // 2. Encontrar por Nombre de Canal
-                            const nameMatches = [];
-                            const notFoundChannels = [];
-                            
-                            (match.channelsList && match.channelsList.length > 0 ? match.channelsList : ["Canales locales"]).forEach((channelText, cIdx) => {
-                              const cName = typeof channelText === "string" ? channelText : (channelText.name || channelText);
-                              const searchName = cName.replace('M+', 'Movistar').replace(/ HD/gi, '').trim().toLowerCase();
-                              const altSearchName = cName.replace('M+', 'M+').replace(/ HD/gi, '').trim().toLowerCase();
-                              
-                              const found = MOCK_CHANNELS.filter(ch => {
-                                const lowerName = ch.name.toLowerCase();
-                                return lowerName.includes(searchName) || lowerName.includes(altSearchName);
-                              });
-                              if (found.length > 0) {
-                                nameMatches.push(...found);
-                              } else {
-                                notFoundChannels.push(cName);
-                              }
-                            });
-
-                            const uniqueRealChannels = Array.from(new Set([...epgMatches, ...nameMatches]));
-
+                          {(match.channelsList && match.channelsList.length > 0 ? match.channelsList : ["No Especificado"]).map((channelText, idx) => {
+                            const rawName = typeof channelText === 'string' ? channelText : (channelText.name || 'Desconocido');
                             return (
-                              <>
-                                {uniqueRealChannels.map(realCh => {
-                                  const isFav = favorites.includes(realCh.id);
-                                  return (
-                                    <div key={realCh.id} className="channel-card" onClick={() => setPlayingMedia(realCh)}>
-                                      <div className="channel-logo-box">
-                                        <img src={realCh.img || `https://api.dicebear.com/7.x/identicon/svg?seed=${realCh.name}&backgroundColor=222222`} alt={realCh.name} className="channel-logo-img" onError={(e) => { e.target.src = 'https://placehold.co/100x100/222/FFF.png?text=TV' }}/>
-                                      </div>
-                                      <div className="channel-info">
-                                        <h3 className="channel-name">{realCh.name}</h3>
-                                        <p className="channel-epg">{realCh.epg && realCh.epg !== 'En Directo' ? realCh.epg : `${match.time} - ${match.tournament}`}</p>
-                                      </div>
-                                      <div className="channel-action">
-                                        <Star size={22} className={`star-icon ${isFav ? 'favorited' : ''}`} onClick={(e) => { e.stopPropagation(); toggleFavorite(e, realCh.id); }} fill={isFav ? '#f1c40f' : 'none'} color={isFav ? '#f1c40f' : 'gray'} />
-                                        <Play size={20} className="play-button-icon" fill="currentColor" />
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                                
-                                {notFoundChannels.map((cName, idx) => (
-                                  <div 
-                                    key={`ch-${idx}-notfound`} 
-                                    className="channel-card" 
-                                    style={{ cursor: 'pointer' }}
-                                    onClick={() => {
-                                      // Lo llevamos a la pestaña de Live y buscamos
-                                      setSelectedMatchId(null);
-                                      setActiveBottomNav('live');
-                                      setSearchQuery(cName.replace('M+', ''));
-                                    }}
-                                  >
-                                    <div className="channel-logo-box">
-                                      <Search size={32} color="#888" />
-                                    </div>
-                                    <div className="channel-info">
-                                      <h3 className="channel-name">{cName}</h3>
-                                      <p className="channel-epg" style={{color: '#f1c40f'}}>Buscar en tus canales...</p>
-                                    </div>
-                                  </div>
-                                ))}
-                              </>
+                              <div 
+                                key={`panel-ch-${idx}`} 
+                                className="channel-card" 
+                                style={{ cursor: 'pointer', border: '1px solid rgba(255,255,255,0.05)' }}
+                                onClick={() => {
+                                  setSelectedMatchId(null);
+                                  setActiveBottomNav('live');
+                                  setSearchQuery(rawName.replace('M+', ''));
+                                }}
+                              >
+                                <div className="channel-logo-box" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                                  <span style={{ fontSize: '20px', fontWeight: '900', color: '#555' }}>TV</span>
+                                </div>
+                                <div className="channel-info">
+                                  <h3 className="channel-name" style={{ fontSize: '17px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{rawName}</h3>
+                                  <p className="channel-epg" style={{ color: 'var(--primary-red)', fontSize: '12px' }}>Emisión Oficial</p>
+                                </div>
+                                <div className="channel-action">
+                                  <Search size={22} color="#666" style={{ cursor: 'pointer' }} />
+                                </div>
+                              </div>
                             );
-                          })()}
+                          })}
                         </div>
                       </div>
                     </div>
