@@ -1009,8 +1009,8 @@
   .movie-detail-grid.layout,
   .series-detail-header {
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
     gap: 20px !important;
   }
   
@@ -1025,27 +1025,27 @@
   }
   
   .movie-detail-meta {
-    justify-content: center;
+    justify-content: flex-start;
   }
   
   .movie-detail-synopsis {
     font-size: 15px !important;
-    text-align: center;
+    text-align: left;
   }
 
   .movie-detail-crew-table {
-    margin: 0 auto 25px auto !important;
+    margin: 0 0 25px 0 !important;
   }
 
   .movie-detail-crew-table td {
     display: block;
-    text-align: center;
+    text-align: left;
     padding-right: 0 !important;
     padding-bottom: 6px !important;
   }
 
   .movie-detail-actions {
-    justify-content: center;
+    justify-content: flex-start;
   }
   
   .movie-detail-content {
