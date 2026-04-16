@@ -733,7 +733,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                   </h3>
                 </div>
 
-                <div className="sports-agenda-board fade-in sports-desktop-scroll scroll-area" style={{ background: 'transparent', border: 'none', padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '15px', overflowY: 'auto', alignContent: 'start' }}>
+                <div className="sports-agenda-board fade-in sports-desktop-scroll scroll-area" style={{ background: 'transparent', border: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '15px', overflowY: 'auto' }}>
                   {(!liveSchedule || liveSchedule.length === 0) ? (
                     <div style={{ textAlign: 'center', padding: '40px', color: '#888', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', width: '100%' }}>
                       <p>No hay eventos premium programados para hoy.</p>
