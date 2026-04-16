@@ -727,9 +727,13 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                             {showDia && <span className="match-time-sub" style={{ color: 'white', fontWeight: '800', fontSize: '12px', textTransform: 'uppercase', margin: 0, padding: 0, marginTop: '2px', opacity: 0.9 }}>{showDia}</span>}
                           </div>
                           
-                          <div className="match-tournament-col" style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 15px', gap: '8px' }}>
+                          <div className="match-tournament-col" style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', padding: '0 15px', gap: '8px', borderLeft: '1px solid rgba(255,255,255,0.05)', marginLeft: '15px' }}>
                             {match.tournamentLogo && <img src={match.tournamentLogo} alt="Torneo" style={{ width: '28px', height: '28px', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none'; }} />}
-                            {match.tournament && <span className="match-time-sub" style={{ color: 'white', fontWeight: '800', fontSize: '16px', textTransform: 'uppercase', margin: 0, padding: 0, letterSpacing: '1px' }}>{match.tournament}</span>}
+                            {match.tournament && <span className="match-time-sub" style={{ color: 'white', fontWeight: '800', fontSize: '15px', textTransform: 'uppercase', margin: 0, padding: 0, letterSpacing: '1px', opacity: 0.9 }}>{match.tournament}</span>}
+                          </div>
+
+                          <div className="match-teams-col" style={{ position: 'relative', zIndex: 1, flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 15px' }}>
+                            <span style={{ color: 'white', fontWeight: 'bold', fontSize: '18px', letterSpacing: '0.5px' }}>{match.title}</span>
                           </div>
 
                           <div className="match-action-col" style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', minWidth: '100px' }}>
