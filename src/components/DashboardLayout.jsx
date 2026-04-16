@@ -723,7 +723,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           
                           {/* Flujo Unificado a la Izquierda (Tren de metadatos) */}
                           <div className="match-info-fluid" style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '24px' }}>
-                            <div className="match-time-col" style={{ display: 'flex', alignItems: 'center' }}>
+                            <div className="match-time-col" style={{ display: 'flex', alignItems: 'center', borderRight: '1px solid rgba(255,255,255,0.1)', paddingRight: '24px' }}>
                               <span className="match-time-main" style={{ color: 'var(--primary-red)', fontSize: '22px', fontWeight: '900', margin: 0, padding: 0, textShadow: '0 2px 8px rgba(217, 30, 24, 0.6)' }}>{showHora}</span>
                             </div>
 
@@ -735,7 +735,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                             
                             <div className="match-tournament-col" style={{ display: 'flex', alignItems: 'center', gap: '10px', borderRight: '1px solid rgba(255,255,255,0.1)', paddingRight: '24px' }}>
                               {match.tournamentLogo && <img src={match.tournamentLogo} alt="Torneo" style={{ width: '28px', height: '28px', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none'; }} />}
-                              {match.tournament && <span className="match-time-sub" style={{ color: '#FF6600', fontWeight: '800', fontSize: '15px', textTransform: 'uppercase', margin: 0, padding: 0, letterSpacing: '0.5px' }}>{match.tournament}</span>}
+                              {match.tournament && <span className="match-time-sub" style={{ color: '#f1c40f', fontWeight: '800', fontSize: '15px', textTransform: 'uppercase', margin: 0, padding: 0, letterSpacing: '0.5px' }}>{match.tournament}</span>}
                             </div>
 
                             <div className="match-teams-col" style={{ display: 'flex', alignItems: 'center' }}>
