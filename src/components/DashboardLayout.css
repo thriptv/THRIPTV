@@ -2250,14 +2250,32 @@ input:checked + .slider:before {
   padding-right: 10px;
 }
 
-/* RESPONSIVE SMARTPHONE - AGENDA DEPORTIVA VERTICAL STACK */
+/* RESPONSIVE SMARTPHONE - AGENDA DEPORTIVA HORIZONTAL SWIPE CAROUSEL */
 @media (max-width: 768px) {
+  .sports-desktop-scroll {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory;
+    gap: 15px !important;
+    padding-bottom: 20px !important;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    max-height: none !important;
+  }
+  .sports-desktop-scroll::-webkit-scrollbar {
+    display: none;
+  }
   .manual-sports-card {
     flex-direction: column !important;
     align-items: flex-start !important;
     padding: 20px !important;
     height: auto !important;
     gap: 15px !important;
+    min-width: 85vw !important;
+    scroll-snap-align: start;
+    flex-shrink: 0 !important;
   }
   .match-info-fluid {
     flex-direction: column !important;
