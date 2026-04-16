@@ -741,19 +741,20 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                   ) : (
                     liveSchedule.map((match, idx) => {
                       
-                      // Volvemos a interceptar la cadena para extraer un subtitulo en blanco debajo del reloj!
+                      // Escaneamos inteligentemente el texto en busca de un formato de hora (ej: "21:00" o "9:45")
                       const timeStr = match.time || 'LIVE';
-                      const timeParts = timeStr.split(' ');
+                      const timeMatch = timeStr.match(/\b\d{1,2}:\d{2}\b/);
+                      
                       let showHora = '';
                       let showDia = '';
-                      if (timeParts.length > 1) {
-                         // Asumimos que escribio "HOY 21:00" -> saca la hora y deja el resto extra
-                         showHora = timeParts.pop();
-                         showDia = timeParts.join(' ');
+                      
+                      if (timeMatch) {
+                          // Extrae la hora exacta para la caja grande y deja lo demas abajo
+                          showHora = timeMatch[0];
+                          showDia = timeStr.replace(timeMatch[0], '').trim();
                       } else {
-                         // Lo escribio simple (ej "21:00")
-                         showHora = timeStr;
-                         showDia = ''; 
+                          showHora = timeStr;
+                          showDia = '';
                       }
                       
                       return (
