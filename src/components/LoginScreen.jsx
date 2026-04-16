@@ -134,11 +134,6 @@ const LoginScreen = ({ onLogin, appLanguage }) => {
         {/* FORMULARIO DINÁMICO */}
         <div className="fade-in">
 
-          {/* ASSET EXTRA 77.png TRIBUTO PRE-CASILLA */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '25px' }}>
-            <img src="/77.png" alt="Header Extra" style={{ maxWidth: '100%', maxHeight: '90px', objectFit: 'contain' }} />
-          </div>
-
           <div className="form-group">
             <label>{t.username}</label>
             <div className="input-wrapper">
