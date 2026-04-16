@@ -1395,7 +1395,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                     {/* SELECTOR DE TEMPORADAS Y EPISODIOS */}
                     <div className="series-seasons-section">
                       <div className="seasons-tabs scroll-area-x">
-                        {series.seasons.map(season => (
+                        {displaySeasons.map(season => (
                           <button 
                             key={season.seasonNumber}
                             className={`season-tab ${activeSeason === season.seasonNumber ? 'active' : ''}`}
