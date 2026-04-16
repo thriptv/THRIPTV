@@ -744,32 +744,16 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                       const finalTimeLabel = match.time || 'LIVE';
                       
                       return (
-                        <div key={match.id} className="sports-match-row manual-sports-card" onClick={() => setSelectedMatchId(match.id)} style={{ position: 'relative', overflow: 'hidden', minHeight: '120px', width: '100%', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', transition: 'transform 0.2s', display: 'flex', alignItems: 'center', padding: '15px 25px 15px 15px' }}>
-                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: `linear-gradient(to right, rgba(15,15,15,0.95) 20%, rgba(15,15,15,0.8) 100%), url(${match.bgImage || ''})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.6, zIndex: 0 }} className="sports-bg-layer"></div>
+                        <div key={match.id} className="sports-match-row manual-sports-card" onClick={() => setSelectedMatchId(match.id)} style={{ position: 'relative', overflow: 'hidden', minHeight: '65px', width: '100%', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', cursor: 'pointer', transition: 'transform 0.2s', display: 'flex', alignItems: 'center', padding: '10px 20px', marginBottom: '8px' }}>
+                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: `linear-gradient(to right, rgba(20,20,20,0.95), rgba(10,10,10,0.98))`, zIndex: 0 }} className="sports-bg-layer"></div>
                           
-                          <div className="match-time-col" style={{ position: 'relative', zIndex: 1, minWidth: '150px', marginLeft: '0px', paddingLeft: '0px', display: 'flex', flexDirection: 'row', alignItems: 'baseline', justifyContent: 'flex-start', textAlign: 'left', gap: '8px' }}>
-                            <span className="match-time-main" style={{ color: 'var(--primary-red)', fontSize: '26px', fontWeight: '900', textShadow: '0 2px 4px rgba(0,0,0,0.8)', margin: 0, padding: 0, lineHeight: 1 }}>{finalTimeLabel}</span>
-                            {match.tournament && <span className="match-time-sub" style={{ color: 'white', fontWeight: '800', fontSize: '16px', textTransform: 'uppercase', margin: 0, padding: 0, lineHeight: 1, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{match.tournament}</span>}
-                          </div>
-                          
-                          <div className="match-teams-col" style={{ position: 'relative', zIndex: 1, flex: 1, justifyContent: 'center', alignItems: 'center', display: 'flex', width: '100%', margin: '0 10px' }}>
-                            
-                            <div className="match-team" style={{ display: 'flex', flex: 1, justifyContent: 'flex-end', alignItems: 'center', paddingRight: '15px' }}>
-                                <img src={match.team1} alt="" onError={(e)=>{e.target.style.display='none'}} style={{ width: '65px', height: '65px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
-                            </div>
-                            
-                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: '40px', padding: '0 10px' }}>
-                              <span className="match-vs" style={{ fontSize: '20px', fontStyle: 'italic', fontWeight: '900', color: 'white', margin: 0, padding: 0, letterSpacing: '2px' }}>VS</span>
-                            </div>
-                            
-                            <div className="match-team right" style={{ display: 'flex', flex: 1, justifyContent: 'flex-start', alignItems: 'center', paddingLeft: '15px' }}>
-                              <img src={match.team2} alt="" onError={(e)=>{e.target.style.display='none'}} style={{ width: '65px', height: '65px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
-                            </div>
-
+                          <div className="match-time-col" style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
+                            <span className="match-time-main" style={{ color: 'var(--primary-red)', fontSize: '20px', fontWeight: '900', margin: 0, padding: 0 }}>{finalTimeLabel}</span>
+                            {match.tournament && <span className="match-time-sub" style={{ color: 'white', fontWeight: '700', fontSize: '15px', textTransform: 'uppercase', margin: 0, padding: 0 }}>{match.tournament}</span>}
                           </div>
 
-                          <div className="match-action-col" style={{ position: 'relative', zIndex: 1, minWidth: '120px', textAlign: 'right' }}>
-                            <button className="premium-btn" onClick={(e) => { e.stopPropagation(); setSelectedMatchId(match.id); }} style={{ background: 'var(--primary-red)', padding: '10px 24px', fontSize: '15px', fontWeight: 'bold', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', boxShadow: '0 4px 15px rgba(217, 30, 24, 0.4)' }}>
+                          <div className="match-action-col" style={{ position: 'relative', zIndex: 1, minWidth: '80px', textAlign: 'right' }}>
+                            <button className="premium-btn" onClick={(e) => { e.stopPropagation(); setSelectedMatchId(match.id); }} style={{ background: 'var(--primary-red)', padding: '8px 20px', fontSize: '13px', fontWeight: 'bold', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', boxShadow: '0 4px 10px rgba(217, 30, 24, 0.4)' }}>
                                 Ver
                             </button>
                           </div>
