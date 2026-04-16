@@ -609,6 +609,28 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
   const displayedMovies = getDisplayedMovies();
   const displayedSeries = getDisplayedSeries();
 
+  const handleNextChannel = () => {
+    if (!playingMedia) return;
+    const isChannel = MOCK_CHANNELS.find(c => c.id === playingMedia.id);
+    if (isChannel) {
+      const idx = displayedChannels.findIndex(c => c.id === playingMedia.id);
+      if (idx !== -1 && idx < displayedChannels.length - 1) {
+        setPlayingMedia(displayedChannels[idx + 1]);
+      }
+    }
+  };
+
+  const handlePrevChannel = () => {
+    if (!playingMedia) return;
+    const isChannel = MOCK_CHANNELS.find(c => c.id === playingMedia.id);
+    if (isChannel) {
+      const idx = displayedChannels.findIndex(c => c.id === playingMedia.id);
+      if (idx > 0) {
+        setPlayingMedia(displayedChannels[idx - 1]);
+      }
+    }
+  };
+
   return (
     <div className="dashboard-container fade-in">
       
@@ -1681,6 +1703,8 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
         <VideoPlayer 
           media={playingMedia} 
           onClose={() => setPlayingMedia(null)} 
+          onNext={MOCK_CHANNELS.find(c => c.id === playingMedia.id) ? handleNextChannel : undefined}
+          onPrev={MOCK_CHANNELS.find(c => c.id === playingMedia.id) ? handlePrevChannel : undefined}
         />
       )}
 

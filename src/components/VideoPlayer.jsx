@@ -10,11 +10,13 @@ import {
   ArrowLeft, 
   Settings, 
   Subtitles,
-  AudioLines
+  AudioLines,
+  SkipBack,
+  SkipForward
 } from 'lucide-react';
 import './VideoPlayer.css';
 
-const VideoPlayer = ({ media, onClose }) => {
+const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
   const videoRef = useRef(null);
   const containerRef = useRef(null);
   const controlsTimeoutRef = useRef(null);
@@ -285,9 +287,21 @@ const VideoPlayer = ({ media, onClose }) => {
           <div className="player-controls-row">
             
             <div className="controls-left">
+              {onPrev && (
+                <button className="player-icon-btn" onClick={onPrev} title="Anterior">
+                  <SkipBack size={24} fill="currentColor" />
+                </button>
+              )}
+              
               <button className="player-icon-btn" onClick={togglePlay}>
                 {isPlaying ? <Pause size={28} fill="currentColor" /> : <Play size={28} fill="currentColor" />}
               </button>
+              
+              {onNext && (
+                <button className="player-icon-btn" onClick={onNext} title="Siguiente">
+                  <SkipForward size={24} fill="currentColor" />
+                </button>
+              )}
               
               <div className="volume-container">
                 <button className="player-icon-btn" onClick={toggleMute}>
