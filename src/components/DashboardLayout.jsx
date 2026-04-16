@@ -1513,14 +1513,44 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
             <div className="settings-card">
               <div className="settings-card-header">
                 <Tv size={24} color="var(--primary-red)" />
-                <div className="settings-card-title-group">
+                <div className="settings-card-title-group" style={{ flex: 1 }}>
                   <h3>{tr.settings.iptvLists}</h3>
                   <p>{tr.settings.iptvListsSub}</p>
                 </div>
               </div>
-              <button className="btn-ghost-rounded" onClick={onLogout}>
-                {tr.settings.addList}
-              </button>
+
+              {/* CARD DE LA SUSCRIPCIÓN / LISTA ACTIVA */}
+              <div style={{ marginTop: '16px', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <h4 style={{ margin: '0 0 5px 0', fontSize: '15px', color: '#fff', textTransform: 'uppercase' }}>MI SUSCRIPCIÓN ACTIVA</h4>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#aaa' }}>
+                      {localStorage.getItem('thriptv_xtUrl') ? (() => { try { return new URL(localStorage.getItem('thriptv_xtUrl')).hostname; } catch(e) { return localStorage.getItem('thriptv_xtUrl'); } })() : 'Archivo M3U Local'}
+                    </p>
+                    {playlistData?.account_info?.status && (
+                      <span style={{ display: 'inline-block', marginTop: '8px', padding: '3px 8px', borderRadius: '4px', background: 'rgba(46, 204, 113, 0.2)', color: '#2ecc71', fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase' }}>
+                        {playlistData.account_info.status}
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <p style={{ margin: '0 0 5px 0', fontSize: '13px', color: '#fff' }}>
+                      <strong>Usuario:</strong> {localStorage.getItem('thriptv_xtUser') || 'Modo Archivo'}
+                    </p>
+                    {playlistData?.account_info?.exp_date && (
+                      <p style={{ margin: 0, fontSize: '12px', color: '#f1c40f' }}>
+                        Expira: {new Date(playlistData.account_info.exp_date * 1000).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
+                <button className="btn-ghost-rounded" onClick={onLogout} style={{ color: '#ff4d4d', border: '1px solid #ff4d4d' }}>
+                  Desconectar Cuenta
+                </button>
+              </div>
             </div>
 
             {/* SECCIÓN 3: Configuración IPTV */}
