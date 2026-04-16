@@ -767,7 +767,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                             
                             {/* Equipo Local */}
                             <div className="match-team" style={{ display: 'flex', flex: 1, justifyContent: 'flex-end', alignItems: 'center', paddingRight: '15px' }}>
-                              <img src={match.team1} alt={t1} onError={(e)=>{e.target.style.display='none'}} style={{ width: '65px', height: '65px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
+                              <img src={match.team1} alt="" onError={(e)=>{e.target.style.display='none'}} style={{ width: '65px', height: '65px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
                             </div>
                             
                             {/* VS o DIA si así lo prefiere el render en el medio, pero mantendremos un texto robusto */}
@@ -777,7 +777,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                             
                             {/* Equipo Visitante */}
                             <div className="match-team right" style={{ display: 'flex', flex: 1, justifyContent: 'flex-start', alignItems: 'center', paddingLeft: '15px' }}>
-                              <img src={match.team2} alt={t2} onError={(e)=>{e.target.style.display='none'}} style={{ width: '65px', height: '65px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
+                              <img src={match.team2} alt="" onError={(e)=>{e.target.style.display='none'}} style={{ width: '65px', height: '65px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
                             </div>
 
                           </div>
