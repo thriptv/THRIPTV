@@ -740,50 +740,42 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                     </div>
                   ) : (
                     liveSchedule.map((match, idx) => {
-                      const [t1, t2] = match.title.split(' vs ');
+                      // Ya no fragmento ni rompo la variable de fecha. Se imprime completa.
+                      const finalTimeLabel = match.time || 'LIVE';
                       
-                      // Extraer dia y hora (ej: "HOY 21:00" -> dia "HOY", hora "21:00")
-                      const timeParts = match.time.split(' ');
-                      let showHora = '';
-                      let showDia = '';
-                      if (timeParts.length > 1) {
-                         showHora = timeParts.pop();
-                         showDia = timeParts.join(' ');
-                      } else {
-                         showHora = match.time;
-                         showDia = ''; // Estrictamente solo el día indicado por el admin
-                      }
-
                       return (
-                        <div key={match.id} className="sports-match-row manual-sports-card" onClick={() => setSelectedMatchId(match.id)} style={{ position: 'relative', overflow: 'hidden', minHeight: '120px', width: '100%', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', transition: 'transform 0.2s', display: 'flex', alignItems: 'center', padding: '15px 25px 15px 15px' }}>
-                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: `linear-gradient(to right, rgba(15,15,15,0.95) 20%, rgba(15,15,15,0.8) 100%), url(${match.bgImage || ''})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.6, zIndex: 0 }} className="sports-bg-layer"></div>
+                        <div key={match.id} className="sports-match-row manual-sports-card" onClick={() => setSelectedMatchId(match.id)} style={{ position: 'relative', overflow: 'hidden', minHeight: '120px', width: '100%', borderRadius: '16px', border: '2px solid white', cursor: 'pointer', transition: 'transform 0.2s', display: 'flex', alignItems: 'center', padding: '15px 25px 15px 20px', boxShadow: '0 6px 20px rgba(217, 30, 24, 0.3)' }}>
                           
-                          <div className="match-time-col" style={{ position: 'relative', zIndex: 1, minWidth: '150px', marginLeft: '0px', paddingLeft: '0px', display: 'flex', flexDirection: 'row', alignItems: 'baseline', justifyContent: 'flex-start', textAlign: 'left', gap: '8px' }}>
-                            <span className="match-time-main" style={{ color: 'var(--primary-red)', fontSize: '26px', fontWeight: '900', textShadow: '0 2px 4px rgba(0,0,0,0.8)', margin: 0, padding: 0, lineHeight: 1 }}>{showHora}</span>
-                            {showDia && <span className="match-time-sub" style={{ color: 'white', fontWeight: '800', fontSize: '16px', textTransform: 'uppercase', margin: 0, padding: 0, lineHeight: 1, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{showDia}</span>}
+                          {/* Fondo Deportivo Rojo Intenso */}
+                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: `linear-gradient(135deg, var(--primary-red) 0%, #880000 100%)`, zIndex: 0 }} className="sports-bg-layer"></div>
+                          
+                          <div className="match-time-col" style={{ position: 'relative', zIndex: 1, minWidth: '160px', borderRight: '2px solid rgba(255,255,255,0.3)', paddingRight: '15px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
+                            <span className="match-time-main" style={{ color: 'white', fontSize: '24px', fontWeight: '900', textShadow: '0 2px 4px rgba(0,0,0,0.5)', margin: 0, padding: 0, lineHeight: 1 }}>{finalTimeLabel}</span>
+                            {match.tournament && <span className="match-time-sub" style={{ color: 'rgba(255,255,255,0.9)', fontWeight: '800', marginTop: '6px', fontSize: '14px', textTransform: 'uppercase', margin: 0, padding: 0, lineHeight: 1.2 }}>{match.tournament}</span>}
                           </div>
                           
-                          <div className="match-teams-col" style={{ position: 'relative', zIndex: 1, flex: 1, justifyContent: 'center', alignItems: 'center', display: 'flex', width: '100%', margin: '0 10px' }}>
+                          <div className="match-teams-col" style={{ position: 'relative', zIndex: 1, flex: 1, justifyContent: 'center', alignItems: 'center', display: 'flex', width: '100%', margin: '0 20px' }}>
                             
-                            {/* Equipo Local */}
-                            <div className="match-team" style={{ display: 'flex', flex: 1, justifyContent: 'flex-end', alignItems: 'center', paddingRight: '15px' }}>
-                              <img src={match.team1} alt="" onError={(e)=>{e.target.style.display='none'}} style={{ width: '65px', height: '65px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
+                            <div className="match-team" style={{ display: 'flex', flex: 1, justifyContent: 'flex-end', alignItems: 'center', paddingRight: '20px' }}>
+                              <div style={{ background: 'rgba(255,255,255,0.15)', padding: '12px', borderRadius: '50%', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }}>
+                                <img src={match.team1} alt="" onError={(e)=>{e.target.style.display='none'}} style={{ width: '60px', height: '60px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
+                              </div>
                             </div>
                             
-                            {/* VS */}
                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: '40px', padding: '0 10px' }}>
-                              <span className="match-vs" style={{ fontSize: '20px', fontStyle: 'italic', fontWeight: '900', color: 'white', margin: 0, padding: 0, letterSpacing: '2px' }}>VS</span>
+                              <span className="match-vs" style={{ fontSize: '24px', fontStyle: 'italic', fontWeight: '900', color: 'white', margin: 0, padding: 0, letterSpacing: '2px', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>VS</span>
                             </div>
                             
-                            {/* Equipo Visitante */}
-                            <div className="match-team right" style={{ display: 'flex', flex: 1, justifyContent: 'flex-start', alignItems: 'center', paddingLeft: '15px' }}>
-                              <img src={match.team2} alt="" onError={(e)=>{e.target.style.display='none'}} style={{ width: '65px', height: '65px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
+                            <div className="match-team right" style={{ display: 'flex', flex: 1, justifyContent: 'flex-start', alignItems: 'center', paddingLeft: '20px' }}>
+                              <div style={{ background: 'rgba(255,255,255,0.15)', padding: '12px', borderRadius: '50%', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }}>
+                                <img src={match.team2} alt="" onError={(e)=>{e.target.style.display='none'}} style={{ width: '60px', height: '60px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
+                              </div>
                             </div>
 
                           </div>
 
                           <div className="match-action-col" style={{ position: 'relative', zIndex: 1, minWidth: '120px', textAlign: 'right' }}>
-                            <button className="premium-btn" onClick={(e) => { e.stopPropagation(); setSelectedMatchId(match.id); }} style={{ background: 'var(--primary-red)', padding: '10px 24px', fontSize: '15px', fontWeight: 'bold', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', boxShadow: '0 4px 15px rgba(217, 30, 24, 0.4)' }}>
+                            <button className="premium-btn" onClick={(e) => { e.stopPropagation(); setSelectedMatchId(match.id); }} style={{ background: 'white', padding: '12px 28px', fontSize: '16px', fontWeight: '900', color: 'var(--primary-red)', border: 'none', borderRadius: '30px', cursor: 'pointer', boxShadow: '0 4px 15px rgba(0,0,0,0.2)', textTransform: 'uppercase', transition: 'all 0.3s' }}>
                                 Ver
                             </button>
                           </div>
