@@ -725,48 +725,47 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
           <div className="movies-container scroll-area" style={{ width: '100%', maxWidth: '100%', padding: '0 40px 20px 40px' }}>
             <div className="home-sections-wrapper" style={{ paddingBottom: '100px' }}>
               
-              {/* DEPORTES HOY */}
+              {/* DEPORTES HOY - AGENDA PRIVADA */}
               <div className="home-section" style={{ marginTop: '16px' }}>
-                <h3 className="section-title" style={{ fontSize: '22px', marginBottom: '16px', fontWeight: '500' }}>
-                  {tr.home.todaysMatches}
-                </h3>
-                <div className="sports-agenda-board fade-in">
-                  <div className="sports-agenda-header">
-                    <div>Hora</div>
-                    <div style={{ textAlign: 'center' }}>Partido</div>
-                    <div style={{ textAlign: 'right' }}>Estado</div>
-                  </div>
-                  
-                  {(!liveSchedule) ? (
-                    <div style={{ textAlign: 'center', padding: '40px', color: '#888' }}>
-                      <RefreshCcw className="icon-spin" size={32} color="#f1c40f" style={{ marginBottom: '15px' }} />
-                      <p>Sincronizando horarios en tiempo real...</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
+                  <h3 className="section-title" style={{ fontSize: '24px', margin: 0, fontWeight: '700', color: 'white' }}>
+                    Eventos Destacados
+                  </h3>
+                  <div style={{ background: 'var(--primary-red)', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold', color: 'white', letterSpacing: '1px' }}>LIVE</div>
+                </div>
+
+                <div className="sports-agenda-board fade-in" style={{ background: 'transparent', border: 'none', padding: 0 }}>
+                  {(!liveSchedule || liveSchedule.length === 0) ? (
+                    <div style={{ textAlign: 'center', padding: '40px', color: '#888', background: 'rgba(255,255,255,0.02)', borderRadius: '16px' }}>
+                      <p>No hay eventos premium programados para hoy.</p>
                     </div>
                   ) : (
                     liveSchedule.map((match, idx) => {
                       const [t1, t2] = match.title.split(' vs ');
                       return (
-                        <div key={match.id} className="sports-match-row" onClick={() => setSelectedMatchId(match.id)}>
-                          <div className="match-time-col">
-                            <span className="match-time-main">{match.time.replace('HOY ', '').replace('MAÑANA ', '').replace('DOMINGO ', '').replace('LUNES ', '').trim()}</span>
-                            <span className="match-time-sub">{match.time.split(' ')[0]}</span>
+                        <div key={match.id} className="sports-match-row manual-sports-card" onClick={() => setSelectedMatchId(match.id)} style={{ position: 'relative', overflow: 'hidden', minHeight: '120px', borderRadius: '16px', marginBottom: '15px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', transition: 'transform 0.2s', display: 'flex', alignItems: 'center', padding: '20px' }}>
+                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: `linear-gradient(to right, rgba(15,15,15,0.95) 20%, rgba(15,15,15,0.7) 100%), url(${match.bgImage || ''})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.6, zIndex: 0 }} className="sports-bg-layer"></div>
+                          
+                          <div className="match-time-col" style={{ position: 'relative', zIndex: 1, minWidth: '120px' }}>
+                            <span className="match-time-main" style={{ color: '#f1c40f', fontSize: '22px', fontWeight: '800' }}>{match.time}</span>
+                            <span className="match-time-sub" style={{ background: 'rgba(255,255,255,0.1)', padding: '4px 10px', borderRadius: '6px', marginTop: '6px', display: 'inline-block', fontSize: '12px' }}>{match.tournament}</span>
                           </div>
                           
-                          <div className="match-teams-col">
-                            <div className="match-team" style={{ justifyContent: 'flex-end', textAlign: 'right' }}>
-                              <span>{t1 || 'Local'}</span>
-                              <img src={match.team1} alt={t1} onError={(e)=>{e.target.style.display='none'}} />
+                          <div className="match-teams-col" style={{ position: 'relative', zIndex: 1, flex: 1, gap: '30px', justifyContent: 'center' }}>
+                            <div className="match-team" style={{ justifyContent: 'flex-end', textAlign: 'right', gap: '15px' }}>
+                              <span style={{ fontSize: '18px', fontWeight: 'bold', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{t1 || 'Local'}</span>
+                              <img src={match.team1} alt={t1} onError={(e)=>{e.target.style.display='none'}} style={{ width: '50px', height: '50px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
                             </div>
-                            <span className="match-vs">VS</span>
-                            <div className="match-team right">
-                              <img src={match.team2} alt={t2} onError={(e)=>{e.target.style.display='none'}} />
-                              <span>{t2 || 'Visitante'}</span>
+                            <span className="match-vs" style={{ fontSize: '24px', opacity: 0.5, fontStyle: 'italic', fontWeight: '900' }}>VS</span>
+                            <div className="match-team right" style={{ gap: '15px' }}>
+                              <img src={match.team2} alt={t2} onError={(e)=>{e.target.style.display='none'}} style={{ width: '50px', height: '50px', objectFit: 'contain', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.5))' }} />
+                              <span style={{ fontSize: '18px', fontWeight: 'bold', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{t2 || 'Visitante'}</span>
                             </div>
                           </div>
 
-                          <div className="match-action-col">
-                            <button className="btn-notify" onClick={(e) => { e.stopPropagation(); setSelectedMatchId(match.id); }}>
-                                + Info
+                          <div className="match-action-col" style={{ position: 'relative', zIndex: 1 }}>
+                            <button className="premium-btn" onClick={(e) => { e.stopPropagation(); setSelectedMatchId(match.id); }} style={{ background: 'var(--primary-red)', padding: '12px 24px', fontSize: '14px', fontWeight: 'bold', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', boxShadow: '0 4px 15px rgba(217, 30, 24, 0.4)' }}>
+                                Sintonizar
                             </button>
                           </div>
                         </div>

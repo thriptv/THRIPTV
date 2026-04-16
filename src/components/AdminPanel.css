@@ -327,3 +327,96 @@
 .btn-copy:hover {
   background: rgba(255,255,255,0.1);
 }
+
+/* DEPORTES ADMIN PANEL */
+.sports-admin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  flex: 1;
+  min-height: 0;
+}
+
+.sports-form-card, .sports-list-card {
+  background: #151518;
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sports-form-card h3, .sports-list-card h3 {
+  color: white;
+  margin-top: 0;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+}
+
+.row-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.form-group label {
+  display: block;
+  color: #888;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.sports-items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  flex: 1;
+}
+
+.sport-admin-row {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 15px 20px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sp-team-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sp-team-info strong {
+  color: white;
+  font-size: 15px;
+}
+
+.sp-sub {
+  color: #888;
+  font-size: 13px;
+}
+
+.btn-delete {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.2);
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-delete:hover {
+  background: rgba(231, 76, 60, 0.2);
+}

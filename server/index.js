@@ -9,6 +9,7 @@ import * as cheerio from 'cheerio';
 dotenv.config();
 
 const CODES_FILE = path.join(process.cwd(), 'server', 'codes.json');
+const SPORTS_FILE = path.join(process.cwd(), 'server', 'sports.json');
 
 const getCodes = () => {
   try {
@@ -20,6 +21,16 @@ const saveCodes = (data) => {
   fs.writeFileSync(CODES_FILE, JSON.stringify(data, null, 2));
 };
 
+const getSports = () => {
+  try {
+    return JSON.parse(fs.readFileSync(SPORTS_FILE, 'utf8'));
+  } catch (e) { return []; }
+};
+
+const saveSports = (data) => {
+  fs.writeFileSync(SPORTS_FILE, JSON.stringify(data, null, 2));
+};
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -27,63 +38,46 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// -------- RUTAS DE PRUEBA Y SALUD --------
-app.get('/api/sports/schedule', async (req, res) => {
-  try {
-    const r = await axios.get('https://www.partidos-de-hoy.com/', {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
-    });
-    const $ = cheerio.load(r.data);
-    const matches = [];
+// -------- AGENDA DEPORTIVA MANUAL (CMS) --------
+app.get('/api/sports/schedule', (req, res) => {
+  const sports = getSports();
+  res.json({ success: true, schedule: sports });
+});
 
-    $('script[type="application/ld+json"]').each((i, el) => {
-      try {
-        const jsonText = $(el).html();
-        if (jsonText) {
-          const data = JSON.parse(jsonText.trim());
-          if (data['@type'] === 'SportsEvent' || (Array.isArray(data) && data[0]['@type'] === 'SportsEvent')) {
-            const eventData = Array.isArray(data) ? data[0] : data;
-            
-            // Extraer canales
-            let channels = [];
-            if (eventData.location && Array.isArray(eventData.location)) {
-              eventData.location.forEach(loc => {
-                if (loc['@type'] === 'VirtualLocation' && loc.name) {
-                  channels = Array.isArray(loc.name) ? loc.name : [loc.name];
-                }
-              });
-            }
+app.post('/api/sports/schedule', (req, res) => {
+  const { password, event } = req.body;
+  
+  if (password !== 'thrbek+76') return res.status(403).json({ error: 'Contraseña de administrador incorrecta' });
+  
+  const sports = getSports();
+  const newEvent = {
+    id: `match-live-${Date.now()}`,
+    sportType: 'football',
+    title: `${event.homeTeam || 'Local'} vs ${event.awayTeam || 'Visitante'}`,
+    time: event.time || '20:00',
+    tournament: event.tournament || 'Campeonato',
+    channelsList: event.channelsList || [], 
+    team1: event.homeLogo || 'https://placehold.co/100x100/101010/FFF.png?text=L',
+    team2: event.awayLogo || 'https://placehold.co/100x100/101010/FFF.png?text=V',
+    bgImage: event.bgImage || 'https://i.pinimg.com/1200x/c7/ab/3c/c7ab3c490ec9e59124fb442b58ea0b33.jpg',
+    createdAt: new Date().toISOString()
+  };
+  
+  sports.push(newEvent);
+  saveSports(sports);
+  res.json({ success: true, event: newEvent });
+});
 
-            // Formatear Hora
-            let timeStr = 'HOY';
-            if (eventData.startDate) {
-                const dateObj = new Date(eventData.startDate);
-                timeStr = dateObj.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' });
-            }
-
-            if (eventData.homeTeam?.name && eventData.awayTeam?.name) {
-               matches.push({
-                 id: `match-live-${matches.length + 1}`,
-                 sportType: 'football',
-                 title: `${eventData.homeTeam.name} vs ${eventData.awayTeam.name}`,
-                 time: timeStr,
-                 tournament: eventData.description ? eventData.description.split(' de ')[1] || 'Torneo' : 'Fútbol',
-                 channelsList: channels,
-                 team1: eventData.homeTeam.image || 'https://placehold.co/100x100/101010/FFF.png?text=Local',
-                 team2: eventData.awayTeam.image || 'https://placehold.co/100x100/101010/FFF.png?text=Visitante',
-                 bgImage: "https://images.unsplash.com/photo-1518605368461-1e12d5ee581b?auto=format&fit=crop&q=80&w=500"
-               });
-            }
-          }
-        }
-      } catch (e) {} 
-    });
-
-    res.json({ success: true, schedule: matches });
-  } catch (err) {
-    console.error("New Scraper Error:", err.message);
-    res.status(500).json({ success: false, error: 'Error fetching schedule' });
-  }
+app.delete('/api/sports/schedule/:id', (req, res) => {
+  const { password } = req.body;
+  if (password !== 'thrbek+76') return res.status(403).json({ error: 'Contraseña de administrador incorrecta' });
+  
+  const eventId = req.params.id;
+  let sports = getSports();
+  sports = sports.filter(s => s.id !== eventId);
+  saveSports(sports);
+  
+  res.json({ success: true });
 });
 
 app.get('/api/health', (req, res) => {

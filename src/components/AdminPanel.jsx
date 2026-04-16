@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { KeySquare, ShieldCheck, Copy, PlusCircle, Unlock, ArrowLeft } from 'lucide-react';
+import { KeySquare, ShieldCheck, Copy, PlusCircle, Unlock, ArrowLeft, Trophy, Calendar, Trash2 } from 'lucide-react';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
@@ -8,6 +8,13 @@ const AdminPanel = () => {
   const [codes, setCodes] = useState([]);
   const [error, setError] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  
+  const [activeTab, setActiveTab] = useState('codes'); // 'codes' | 'sports'
+  const [sportsList, setSportsList] = useState([]);
+  const [sportForm, setSportForm] = useState({
+    homeTeam: '', homeLogo: '', awayTeam: '', awayLogo: '',
+    time: '', tournament: '', channelsList: ''
+  });
 
   const fetchCodes = async (pass) => {
     try {
@@ -27,6 +34,50 @@ const AdminPanel = () => {
     } catch (err) {
       setError('Error conectando al servidor.');
     }
+  };
+
+  const fetchSports = async () => {
+    try {
+        const resp = await fetch('/api/sports/schedule');
+        const data = await resp.json();
+        if (resp.ok) setSportsList(data.schedule || []);
+    } catch (err) {}
+  };
+
+  const handleCreateEvent = async (e) => {
+    e.preventDefault();
+    if (!sportForm.homeTeam || !sportForm.awayTeam) return;
+    try {
+      const obj = {
+        password,
+        event: {
+          ...sportForm,
+          channelsList: sportForm.channelsList.split(',').map(s => s.trim()).filter(Boolean)
+        }
+      };
+      
+      const resp = await fetch('/api/sports/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(obj)
+      });
+      if (resp.ok) {
+        fetchSports();
+        setSportForm({ homeTeam: '', homeLogo: '', awayTeam: '', awayLogo: '', time: '', tournament: '', channelsList: '' });
+      }
+    } catch (err) { alert("Error"); }
+  };
+
+  const handleDeleteEvent = async (id) => {
+    if (!window.confirm("¿Seguro que quieres borrar este partido?")) return;
+    try {
+      const resp = await fetch(`/api/sports/schedule/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+      if (resp.ok) fetchSports();
+    } catch (err) {}
   };
 
   const handleLogin = (e) => {
@@ -58,13 +109,17 @@ const AdminPanel = () => {
     navigator.clipboard.writeText(text);
   };
 
+  useEffect(() => {
+    if (isAuthenticated) fetchSports();
+  }, [isAuthenticated]);
+
   if (!isAuthenticated) {
     return (
       <div className="admin-login-layout">
         <div className="admin-login-card fade-in">
           <ShieldCheck size={48} className="shield-icon" />
           <h2>Acceso Clasificado</h2>
-          <p>Panel de Administración y Cajero de Códigos</p>
+          <p>Panel de Administración VIP</p>
           <form onSubmit={handleLogin} className="admin-login-form">
             <input 
               type="password" 
@@ -90,7 +145,8 @@ const AdminPanel = () => {
           <h2>THR Admin</h2>
         </div>
         <div className="admin-nav">
-          <div className="admin-nav-item active"><Unlock size={20}/> Cajero de Licencias</div>
+          <div className={`admin-nav-item ${activeTab === 'codes' ? 'active' : ''}`} onClick={() => setActiveTab('codes')}><Unlock size={20}/> Cajero de Licencias</div>
+          <div className={`admin-nav-item ${activeTab === 'sports' ? 'active' : ''}`} onClick={() => setActiveTab('sports')}><Trophy size={20}/> Agenda Deportiva</div>
         </div>
         <div style={{marginTop: 'auto', padding: '20px'}}>
            <button className="admin-btn-logout" onClick={() => window.location.href = '/'}><ArrowLeft size={16}/> Salir del Panel</button>
@@ -98,71 +154,159 @@ const AdminPanel = () => {
       </div>
 
       <div className="admin-content">
-        <div className="admin-header">
-          <h1>Generador de Pines de Telegram</h1>
-          <button className="admin-btn-generate bounce-in" onClick={handleGenerate} disabled={isGenerating}>
-            <PlusCircle size={20} /> {isGenerating ? 'Fabricando...' : 'Crear Código VIP'}
-          </button>
-        </div>
-
-        <div className="admin-stats-row">
-          <div className="admin-stat-card">
-            <h3>Pines Generados</h3>
-            <div className="admin-stat-num">{codes.length}</div>
-          </div>
-          <div className="admin-stat-card">
-            <h3>Disponibles</h3>
-            <div className="admin-stat-num" style={{color: '#2ecc71'}}>
-              {codes.filter(c => c.status === 'available').length}
+        
+        {activeTab === 'codes' && (
+          <>
+            <div className="admin-header">
+              <h1>Generador de Pines de Telegram</h1>
+              <button className="admin-btn-generate bounce-in" onClick={handleGenerate} disabled={isGenerating}>
+                <PlusCircle size={20} /> {isGenerating ? 'Fabricando...' : 'Crear Código VIP'}
+              </button>
             </div>
-          </div>
-          <div className="admin-stat-card">
-            <h3>Canjeados</h3>
-            <div className="admin-stat-num" style={{color: '#e74c3c'}}>
-              {codes.filter(c => c.status === 'used').length}
-            </div>
-          </div>
-        </div>
 
-        <div className="admin-table-container scroll-area">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Código VIP</th>
-                <th>Estado</th>
-                <th>Fecha de Creación</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {codes.slice().reverse().map((c, idx) => (
-                <tr key={idx} className={c.status === 'available' ? 'row-available' : 'row-used'}>
-                  <td className="pin-text">{c.pin.substring(0, 4)}-{c.pin.substring(4, 8)}-{c.pin.substring(8, 12)}</td>
-                  <td>
-                    <span className={`status-badge ${c.status}`}>
-                      {c.status === 'available' ? 'LIBRE' : 'QUEMADO'}
-                    </span>
-                  </td>
-                  <td>{new Date(c.createdAt).toLocaleString()}</td>
-                  <td>
-                    {c.status === 'available' && (
-                      <button className="base-btn btn-copy" onClick={() => copyToClipboard(c.pin)}>
-                        <Copy size={16} /> Copiar
+            <div className="admin-stats-row">
+              <div className="admin-stat-card">
+                <h3>Pines Generados</h3>
+                <div className="admin-stat-num">{codes.length}</div>
+              </div>
+              <div className="admin-stat-card">
+                <h3>Disponibles</h3>
+                <div className="admin-stat-num" style={{color: '#2ecc71'}}>
+                  {codes.filter(c => c.status === 'available').length}
+                </div>
+              </div>
+              <div className="admin-stat-card">
+                <h3>Canjeados</h3>
+                <div className="admin-stat-num" style={{color: '#e74c3c'}}>
+                  {codes.filter(c => c.status === 'used').length}
+                </div>
+              </div>
+            </div>
+
+            <div className="admin-table-container scroll-area">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Código VIP</th>
+                    <th>Estado</th>
+                    <th>Fecha de Creación</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {codes.slice().reverse().map((c, idx) => (
+                    <tr key={idx} className={c.status === 'available' ? 'row-available' : 'row-used'}>
+                      <td className="pin-text">{c.pin.substring(0, 4)}-{c.pin.substring(4, 8)}-{c.pin.substring(8, 12)}</td>
+                      <td>
+                        <span className={`status-badge ${c.status}`}>
+                          {c.status === 'available' ? 'LIBRE' : 'QUEMADO'}
+                        </span>
+                      </td>
+                      <td>{new Date(c.createdAt).toLocaleString()}</td>
+                      <td>
+                        {c.status === 'available' && (
+                          <button className="base-btn btn-copy" onClick={() => copyToClipboard(c.pin)}>
+                            <Copy size={16} /> Copiar
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                  {codes.length === 0 && (
+                    <tr>
+                      <td colSpan="4" style={{textAlign: 'center', padding: '40px', color: '#666'}}>
+                        Aún no se ha generado ningún código.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {activeTab === 'sports' && (
+          <div className="fade-in" style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+            <div className="admin-header">
+              <h1>Control de Agenda Deportiva</h1>
+            </div>
+            
+            <div className="sports-admin-grid">
+              
+              <div className="sports-form-card">
+                <h3><Calendar size={18} /> Programar Nuevo Partido</h3>
+                <form onSubmit={handleCreateEvent}>
+                  <div className="form-group row-group">
+                    <div>
+                      <label>Equipo Local</label>
+                      <input type="text" className="admin-input" placeholder="Nombre (ej. Real Madrid)" value={sportForm.homeTeam} onChange={e => setSportForm({...sportForm, homeTeam: e.target.value})} required />
+                    </div>
+                    <div>
+                      <label>Escudo Local (Url)</label>
+                      <input type="text" className="admin-input" placeholder="https://..." value={sportForm.homeLogo} onChange={e => setSportForm({...sportForm, homeLogo: e.target.value})} />
+                    </div>
+                  </div>
+                  
+                  <div className="form-group row-group" style={{marginTop: '15px'}}>
+                    <div>
+                      <label>Equipo Visitante</label>
+                      <input type="text" className="admin-input" placeholder="Nombre (ej. FC Barcelona)" value={sportForm.awayTeam} onChange={e => setSportForm({...sportForm, awayTeam: e.target.value})} required />
+                    </div>
+                    <div>
+                      <label>Escudo Visitante (Url)</label>
+                      <input type="text" className="admin-input" placeholder="https://..." value={sportForm.awayLogo} onChange={e => setSportForm({...sportForm, awayLogo: e.target.value})} />
+                    </div>
+                  </div>
+                  
+                  <div className="form-group row-group" style={{marginTop: '15px'}}>
+                    <div>
+                      <label>Hora y Fecha</label>
+                      <input type="text" className="admin-input" placeholder="ej. HOY 21:00" value={sportForm.time} onChange={e => setSportForm({...sportForm, time: e.target.value})} required />
+                    </div>
+                    <div>
+                      <label>Competición / Torneo</label>
+                      <input type="text" className="admin-input" placeholder="ej. LaLiga EA Sports" value={sportForm.tournament} onChange={e => setSportForm({...sportForm, tournament: e.target.value})} required />
+                    </div>
+                  </div>
+
+                  <div className="form-group" style={{marginTop: '15px'}}>
+                    <label>Canales de Transmisión (nombres separados por coma)</label>
+                    <input type="text" className="admin-input" placeholder="ej. M LIGA DE CAMPEONES, DAZN F1, GOL PLAY" value={sportForm.channelsList} onChange={e => setSportForm({...sportForm, channelsList: e.target.value})} required />
+                  </div>
+
+                  <button type="submit" className="admin-btn-generate" style={{marginTop: '24px', width: '100%'}}>
+                    <PlusCircle size={18} /> Registrar Evento en Cartelera
+                  </button>
+                </form>
+              </div>
+
+              
+              <div className="sports-list-card">
+                <h3>Partidos Activos</h3>
+                <div className="sports-items-container scroll-area">
+                  {sportsList.slice().reverse().map(event => (
+                    <div key={event.id} className="sport-admin-row">
+                      <div className="sp-team-info">
+                        <strong>{event.title}</strong>
+                        <span className="sp-sub">{event.tournament} - {event.time}</span>
+                      </div>
+                      <button className="base-btn btn-delete" onClick={() => handleDeleteEvent(event.id)}>
+                        <Trash2 size={16} /> Borrar
                       </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-              {codes.length === 0 && (
-                <tr>
-                  <td colSpan="4" style={{textAlign: 'center', padding: '40px', color: '#666'}}>
-                    Aún no se ha generado ningún código.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                  ))}
+                  {sportsList.length === 0 && (
+                    <div style={{color: '#666', textAlign: 'center', marginTop: '40px'}}>
+                      No hay partidos programados. Cartelera vacía.
+                    </div>
+                  )}
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
