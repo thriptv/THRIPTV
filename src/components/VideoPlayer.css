@@ -298,3 +298,54 @@
   width: 1px;
   background: rgba(255,255,255,0.1);
 }
+
+/* RESPONSIVE SMARTPHONE REPRODUCTOR */
+@media (max-width: 768px) {
+  .player-header {
+    padding: 15px 20px;
+  }
+  .player-title-info h2 {
+    font-size: 16px;
+  }
+  .player-bottom {
+    padding: 0 20px 15px 20px;
+  }
+  .controls-left, .controls-right {
+    gap: 15px;
+  }
+  .player-icon-btn {
+    padding: 4px;
+  }
+  .player-icon-btn.with-label {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  .volume-container {
+    display: none;
+  }
+  .time-display {
+    font-size: 12px;
+    margin-left: 5px;
+  }
+  .settings-menu-overlay {
+    bottom: 60px;
+    right: 15px;
+    padding: 15px;
+    max-height: 250px;
+    overflow-y: auto;
+  }
+  .settings-menu-content {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .menu-column {
+    min-width: 100%;
+  }
+  .settings-divider {
+    display: none;
+  }
+  .big-play-btn {
+    width: 60px;
+    height: 60px;
+  }
+}
