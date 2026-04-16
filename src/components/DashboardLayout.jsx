@@ -729,7 +729,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                             </div>
 
                             {showDia ? (
-                              <div className="match-day-col" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderRight: '1px solid rgba(255,255,255,0.1)', minWidth: '100px', height: '100%' }}>
+                              <div className="match-day-col" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', borderRight: '1px solid rgba(255,255,255,0.1)', minWidth: '100px', height: '100%', paddingLeft: '20px' }}>
                                 <span className="match-time-sub" style={{ color: 'white', fontWeight: '800', fontSize: '15px', textTransform: 'uppercase', margin: 0, padding: 0, opacity: 0.9, letterSpacing: '0.5px' }}>{showDia}</span>
                               </div>
                             ) : (
