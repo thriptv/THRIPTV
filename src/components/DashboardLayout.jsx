@@ -726,7 +726,8 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                             {showDia && <span className="match-time-sub" style={{ color: 'white', fontWeight: '800', fontSize: '12px', textTransform: 'uppercase', margin: 0, padding: 0, marginTop: '2px', opacity: 0.9 }}>{showDia}</span>}
                           </div>
                           
-                          <div className="match-tournament-col" style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 15px' }}>
+                          <div className="match-tournament-col" style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 15px', gap: '8px' }}>
+                            {match.tournamentLogo && <img src={match.tournamentLogo} alt="Torneo" style={{ width: '28px', height: '28px', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none'; }} />}
                             {match.tournament && <span className="match-time-sub" style={{ color: 'white', fontWeight: '800', fontSize: '16px', textTransform: 'uppercase', margin: 0, padding: 0, letterSpacing: '1px' }}>{match.tournament}</span>}
                           </div>
 

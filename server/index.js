@@ -56,6 +56,7 @@ app.post('/api/sports/schedule', (req, res) => {
     title: `${event.homeTeam || 'Local'} vs ${event.awayTeam || 'Visitante'}`,
     time: event.time || '20:00',
     tournament: event.tournament || 'Campeonato',
+    tournamentLogo: event.tournamentLogo || '',
     channelsList: event.channelsList || [], 
     team1: event.homeLogo || 'https://placehold.co/100x100/101010/FFF.png?text=L',
     team2: event.awayLogo || 'https://placehold.co/100x100/101010/FFF.png?text=V',

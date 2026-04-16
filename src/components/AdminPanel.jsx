@@ -13,7 +13,7 @@ const AdminPanel = () => {
   const [sportsList, setSportsList] = useState([]);
   const [sportForm, setSportForm] = useState({
     homeTeam: '', homeLogo: '', awayTeam: '', awayLogo: '',
-    time: '', tournament: '', channelsList: ''
+    time: '', tournament: '', tournamentLogo: '', channelsList: ''
   });
 
   const fetchCodes = async (pass) => {
@@ -63,7 +63,7 @@ const AdminPanel = () => {
       });
       if (resp.ok) {
         fetchSports();
-        setSportForm({ homeTeam: '', homeLogo: '', awayTeam: '', awayLogo: '', time: '', tournament: '', channelsList: '' });
+        setSportForm({ homeTeam: '', homeLogo: '', awayTeam: '', awayLogo: '', time: '', tournament: '', tournamentLogo: '', channelsList: '' });
       }
     } catch (err) { alert("Error"); }
   };
@@ -258,7 +258,7 @@ const AdminPanel = () => {
                     </div>
                   </div>
                   
-                  <div className="form-group row-group" style={{marginTop: '15px'}}>
+                  <div className="form-group row-group" style={{marginTop: '15px', gridTemplateColumns: '1fr 1fr 1fr'}}>
                     <div>
                       <label>Hora y Fecha</label>
                       <input type="text" className="admin-input" placeholder="ej. HOY 21:00" value={sportForm.time} onChange={e => setSportForm({...sportForm, time: e.target.value})} required />
@@ -266,6 +266,10 @@ const AdminPanel = () => {
                     <div>
                       <label>Competición / Torneo</label>
                       <input type="text" className="admin-input" placeholder="ej. LaLiga EA Sports" value={sportForm.tournament} onChange={e => setSportForm({...sportForm, tournament: e.target.value})} required />
+                    </div>
+                    <div>
+                      <label>Logo Competición (Url)</label>
+                      <input type="text" className="admin-input" placeholder="https://..." value={sportForm.tournamentLogo} onChange={e => setSportForm({...sportForm, tournamentLogo: e.target.value})} />
                     </div>
                   </div>
 
