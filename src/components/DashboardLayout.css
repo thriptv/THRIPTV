@@ -375,9 +375,7 @@
 }
 
 .movie-poster-card:hover {
-  transform: translateY(-8px) scale(1.02);
   border-color: var(--primary-red);
-  box-shadow: 0 10px 20px rgba(217, 30, 24, 0.25);
   z-index: 5;
 }
 
@@ -466,9 +464,9 @@
   transition: transform 0.4s ease;
 }
 
-.movie-poster-card:hover .movie-poster-img {
-  transform: scale(1.08); /* Efecto cinemático */
-}
+/* .movie-poster-card:hover .movie-poster-img {
+  transform: scale(1.08); 
+} */
 
 /* Fallback para cuando no hay carátula */
 .movie-poster-fallback {
