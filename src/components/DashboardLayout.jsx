@@ -734,16 +734,16 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                   <div style={{ background: 'var(--primary-red)', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold', color: 'white', letterSpacing: '1px' }}>LIVE</div>
                 </div>
 
-                <div className="sports-agenda-board fade-in" style={{ background: 'transparent', border: 'none', padding: 0 }}>
+                <div className="sports-agenda-board fade-in scroll-area-x" style={{ background: 'transparent', border: 'none', padding: 0, display: 'flex', gap: '20px', overflowX: 'auto', paddingBottom: '20px' }}>
                   {(!liveSchedule || liveSchedule.length === 0) ? (
-                    <div style={{ textAlign: 'center', padding: '40px', color: '#888', background: 'rgba(255,255,255,0.02)', borderRadius: '16px' }}>
+                    <div style={{ textAlign: 'center', padding: '40px', color: '#888', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', width: '100%' }}>
                       <p>No hay eventos premium programados para hoy.</p>
                     </div>
                   ) : (
                     liveSchedule.map((match, idx) => {
                       const [t1, t2] = match.title.split(' vs ');
                       return (
-                        <div key={match.id} className="sports-match-row manual-sports-card" onClick={() => setSelectedMatchId(match.id)} style={{ position: 'relative', overflow: 'hidden', minHeight: '120px', borderRadius: '16px', marginBottom: '15px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', transition: 'transform 0.2s', display: 'flex', alignItems: 'center', padding: '20px' }}>
+                        <div key={match.id} className="sports-match-row manual-sports-card" onClick={() => setSelectedMatchId(match.id)} style={{ position: 'relative', overflow: 'hidden', minHeight: '120px', minWidth: 'min(450px, 85vw)', flex: '0 0 auto', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', transition: 'transform 0.2s', display: 'flex', alignItems: 'center', padding: '20px' }}>
                           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: `linear-gradient(to right, rgba(15,15,15,0.95) 20%, rgba(15,15,15,0.7) 100%), url(${match.bgImage || ''})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.6, zIndex: 0 }} className="sports-bg-layer"></div>
                           
                           <div className="match-time-col" style={{ position: 'relative', zIndex: 1, minWidth: '120px' }}>
