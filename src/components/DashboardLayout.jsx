@@ -219,48 +219,7 @@ const STATIC_MOCK_SERIES = [
   }
 ];
 
-const MOCK_SPORTS_AGENDA = [
-  { 
-    id: 'match-1', sportType: 'football', title: "Arsenal vs Man City", time: "HOY 21:00", tournament: "Premier League", channelName: "DAZN 1 HD", channelId: 2, 
-    team1: "https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg", team2: "https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg", 
-    bgImage: "https://images.unsplash.com/photo-1518605368461-1e12d5ee581b?auto=format&fit=crop&q=80&w=500", synopsis: "Duelo directo."
-  },
-  { 
-    id: 'match-2', sportType: 'football', title: "PSG vs Bayern", time: "HOY 20:45", tournament: "Champions League", channelName: "ESPN HD", channelId: 3, 
-    team1: "https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg", team2: "https://upload.wikimedia.org/wikipedia/commons/1/1b/FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg", 
-    bgImage: "https://images.unsplash.com/photo-1489945052260-4f21c52268b9?auto=format&fit=crop&q=80&w=500", synopsis: "Choque de titanes."
-  },
-  { 
-    id: 'match-3', sportType: 'football', title: "R. Madrid vs Barcelona", time: "MAÑANA 16:15", tournament: "La Liga", channelName: "ESPN 1 HD", channelId: 2, 
-    team1: "https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg", team2: "https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg", 
-    bgImage: "https://images.unsplash.com/photo-1551280857-2b9bbe5260fc?auto=format&fit=crop&q=80&w=500", synopsis: "El Clásico español."
-  },
-  { 
-    id: 'match-4', sportType: 'football', title: "AC Milan vs Inter", time: "DOMINGO 18:00", tournament: "Serie A", channelName: "DAZN 1 HD", channelId: 2, 
-    team1: "https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg", team2: "https://upload.wikimedia.org/wikipedia/commons/0/05/FC_Internazionale_Milano_2021.svg", 
-    bgImage: "https://images.unsplash.com/photo-1508344928928-7137b2f4a478?auto=format&fit=crop&q=80&w=500", synopsis: "El Derby della Madonnina."
-  },
-  { 
-    id: 'match-5', sportType: 'football', title: "Liverpool vs Chelsea", time: "DOMINGO 17:30", tournament: "Premier League", channelName: "Sky Sports", channelId: 3, 
-    team1: "https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg", team2: "https://upload.wikimedia.org/wikipedia/en/c/cc/Chelsea_FC.svg", 
-    bgImage: "https://images.unsplash.com/photo-1518091043644-c1d44579d2c1?auto=format&fit=crop&q=80&w=500", synopsis: "Batalla en Anfield."
-  },
-  { 
-    id: 'match-6', sportType: 'football', title: "Juventus vs Napoli", time: "LUNES 20:45", tournament: "Serie A", channelName: "DAZN 2 HD", channelId: 2, 
-    team1: "https://upload.wikimedia.org/wikipedia/commons/b/bc/Juventus_FC_2017_icon_%28black%29.svg", team2: "https://upload.wikimedia.org/wikipedia/commons/a/a2/SSC_Napoli_%282021%29.svg", 
-    bgImage: "https://images.unsplash.com/photo-1431324155629-1a6d0a11f44e?auto=format&fit=crop&q=80&w=500", synopsis: "Lucha por el Scudetto."
-  },
-  { 
-    id: 'match-7', sportType: 'football', title: "Dortmund vs B. Múnich", time: "SÁBADO 15:30", tournament: "Bundesliga", channelName: "Fox Sports", channelId: 3, 
-    team1: "https://upload.wikimedia.org/wikipedia/commons/6/67/Borussia_Dortmund_logo.svg", team2: "https://upload.wikimedia.org/wikipedia/commons/1/1b/FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg", 
-    bgImage: "https://images.unsplash.com/photo-1589487391730-58f20eb2c308?auto=format&fit=crop&q=80&w=500", synopsis: "Der Klassiker."
-  },
-  { 
-    id: 'match-8', sportType: 'football', title: "Sevilla vs Betis", time: "DOMINGO 21:00", tournament: "La Liga", channelName: "Gol TV", channelId: 4, 
-    team1: "https://upload.wikimedia.org/wikipedia/en/3/3b/Sevilla_FC_logo.svg", team2: "https://upload.wikimedia.org/wikipedia/en/1/13/Real_Betis_logo.svg", 
-    bgImage: "https://images.unsplash.com/photo-1550881111-7cfde14b8073?auto=format&fit=crop&q=80&w=500", synopsis: "El Gran Derbi de Sevilla."
-  }
-];
+const MOCK_SPORTS_AGENDA = [];
 
 const cleanTitle = (rawTitle) => {
   if (!rawTitle) return '';
