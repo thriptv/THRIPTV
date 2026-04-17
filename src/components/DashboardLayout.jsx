@@ -779,9 +779,9 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           {isFullscreen ? (
-            <Minimize className="icon-refresh desktop-only" size={22} onClick={toggleFullScreen} title="Salir de pantalla completa" />
+            <Minimize className="icon-refresh" size={22} onClick={toggleFullScreen} title="Salir de pantalla completa" />
           ) : (
-            <Maximize className="icon-refresh desktop-only" size={22} onClick={toggleFullScreen} title="Pantalla completa" />
+            <Maximize className="icon-refresh" size={22} onClick={toggleFullScreen} title="Pantalla completa" />
           )}
           <RefreshCcw className="icon-refresh" size={22} />
         </div>
