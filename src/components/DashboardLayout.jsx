@@ -1575,8 +1575,8 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                         {currentSeason.episodes.map(ep => (
                           <div key={ep.id} className="episode-card-text-only" onClick={() => setPlayingMedia({ ...ep, parentTitle: series.title })}>
                             <div className="episode-text-info">
-                              <h4 className="episode-text-title">{ep.epNumber}. {ep.title}</h4>
-                              <span className="episode-text-duration">{ep.duration || 'N/A'}</span>
+                              <h4 className="episode-text-title">S{String(currentSeason.seasonNumber).padStart(2, '0')}E{String(ep.epNumber).padStart(2, '0')}</h4>
+                              <span className="episode-text-duration">{ep.duration || ''}</span>
                             </div>
                             <div className="episode-text-action">
                               <Play fill="white" size={16} />
