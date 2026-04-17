@@ -119,7 +119,7 @@ const LoginScreen = ({ onLogin, appLanguage }) => {
       {/* SECCIÓN DEL LOGO Y MARCA */}
       <div className="logo-section">
         <div className="img-logo-circle">
-          <img src="/Logo.png" alt="THRIPTV Logo" className="logo-image" style={{ objectFit: 'contain' }} />
+          <img src="./Logo.png" alt="THRIPTV Logo" className="logo-image" style={{ objectFit: 'contain' }} />
         </div>
         <h1 className="brand-text">
           THR<span>IPTV</span>
@@ -192,6 +192,12 @@ const LoginScreen = ({ onLogin, appLanguage }) => {
           <LogIn className="submit-icon" size={20} />
           {isLoading ? t.btnDecoding : t.btnConnect}
         </button>
+
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+           <span style={{ color: 'var(--primary-red, #e74c3c)', fontSize: '14px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>
+             Pruébalo 7 días gratis
+           </span>
+        </div>
 
 
       </div>

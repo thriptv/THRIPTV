@@ -27,7 +27,9 @@ import {
   Key,
   Trash2,
   Home,
-  PlusCircle
+  PlusCircle,
+  Maximize,
+  Minimize
 } from 'lucide-react';
 import './DashboardLayout.css';
 import VideoPlayer from './VideoPlayer';
@@ -263,6 +265,24 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [activeBottomNav, setActiveBottomNav] = useState('home'); // 'home' | 'settings' | 'movies' | 'series' | 'live'
   
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => console.log(err));
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+    }
+  };
+  
   const homeMoviesRef = useRef(null);
   const homeSeriesRef = useRef(null);
   const scrollRef = (ref, amount) => { if(ref.current) ref.current.scrollBy({ left: amount, behavior: 'smooth' }); };
@@ -428,6 +448,83 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
   const [showQRModal, setShowQRModal] = useState(false);
   const [activationCode, setActivationCode] = useState('');
 
+  const [isTrialExpired, setIsTrialExpired] = useState(false);
+  const [trialDaysLeft, setTrialDaysLeft] = useState(7);
+
+  // GESTION DE MULTIPLES LISTAS
+  const [savedLists, setSavedLists] = useState([]);
+  const [isEditListOpen, setIsEditListOpen] = useState(false);
+  const [newListUrl, setNewListUrl] = useState('');
+  const [newListUser, setNewListUser] = useState('');
+  const [newListPass, setNewListPass] = useState('');
+
+  useEffect(() => {
+    try {
+      let stored = JSON.parse(localStorage.getItem('thriptv_saved_lists') || '[]');
+      const currentUrl = localStorage.getItem('thriptv_xtUrl');
+      const currentUser = localStorage.getItem('thriptv_xtUser');
+      const currentPass = localStorage.getItem('thriptv_xtPass');
+      
+      if (currentUrl && currentUser && currentPass) {
+        const exists = stored.find(l => l.url === currentUrl && l.user === currentUser);
+        if (!exists) {
+           const currentList = { url: currentUrl, user: currentUser, pass: currentPass, name: currentUser };
+           stored.push(currentList);
+           localStorage.setItem('thriptv_saved_lists', JSON.stringify(stored));
+        }
+      }
+      setSavedLists(stored);
+    } catch (e) { console.error("Error reading saved lists", e); }
+  }, []);
+
+  const handleAddList = () => {
+    if (!newListUrl || !newListUser || !newListPass) {
+      alert("Por favor rellena URL, Usuario y Contraseña");
+      return;
+    }
+    const newList = { url: newListUrl, user: newListUser, pass: newListPass, name: newListUser };
+    const updated = [...savedLists, newList];
+    setSavedLists(updated);
+    localStorage.setItem('thriptv_saved_lists', JSON.stringify(updated));
+    setNewListUrl(''); setNewListUser(''); setNewListPass('');
+  };
+
+  const handleActivateList = (list) => {
+    localStorage.setItem('thriptv_xtUrl', list.url);
+    localStorage.setItem('thriptv_xtUser', list.user);
+    localStorage.setItem('thriptv_xtPass', list.pass);
+    window.location.reload();
+  };
+
+  const handleDeleteList = (list) => {
+    const updated = savedLists.filter(l => !(l.url === list.url && l.user === list.user));
+    setSavedLists(updated);
+    localStorage.setItem('thriptv_saved_lists', JSON.stringify(updated));
+  };
+
+  useEffect(() => {
+    if (!isPremium) {
+      let startDateStr = localStorage.getItem('thriptv_trial_start');
+      if (!startDateStr) {
+        startDateStr = Date.now().toString();
+        localStorage.setItem('thriptv_trial_start', startDateStr);
+      }
+      
+      const startDate = parseInt(startDateStr, 10);
+      const now = Date.now();
+      const daysPassed = (now - startDate) / (1000 * 60 * 60 * 24);
+      const remaining = 7 - daysPassed;
+      
+      if (remaining <= 0) {
+        setIsTrialExpired(true);
+        setTrialDaysLeft(0);
+      } else {
+        setIsTrialExpired(false);
+        setTrialDaysLeft(Math.ceil(remaining));
+      }
+    }
+  }, [isPremium]);
+
   const handlePayPalPayment = () => {
     setShowQRModal(true);
   };
@@ -590,6 +687,84 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
     }
   };
 
+  if (isTrialExpired && !isPremium) {
+    return (
+      <div className="dashboard-container fade-in" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-dark)' }}>
+        <div className="settings-card payment-banner" style={{ maxWidth: '600px', width: '100%', margin: '0 20px', textAlign: 'center' }}>
+          <div className="settings-card-header" style={{ justifyContent: 'center', marginBottom: '20px' }}>
+             <Shield size={32} color="#f1c40f" />
+             <div className="settings-card-title-group" style={{ textAlign: 'center' }}>
+               <h3 style={{ color: '#f1c40f', fontSize: '24px' }}>Periodo de Prueba Finalizado</h3>
+               <p style={{ fontSize: '15px', marginTop: '10px' }}>Tu periodo de prueba de 7 días ha expirado. Por favor, adquiere la Licencia Premium para continuar disfrutando de la aplicación.</p>
+             </div>
+          </div>
+          <div className="payment-action-box fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
+             <button className="btn-play-movie" onClick={handlePayPalPayment} disabled={isVerifying} style={{ width: '100%', maxWidth: '300px', justifyContent: 'center', fontSize: '18px', padding: '16px', letterSpacing: '1px', borderRadius: '12px' }}>
+                6,99 € 1 AÑO
+             </button>
+           </div>
+           
+           <div style={{ marginTop: '20px' }}>
+             <button className="btn-ghost-rounded" onClick={onLogout} style={{ color: '#ff4d4d', border: '1px solid #ff4d4d' }}>
+                <LogOut size={18} style={{ marginRight: '8px' }}/> {tr.nav.logout}
+             </button>
+           </div>
+        </div>
+
+        {/* MODAL DEL QR DE PAGO (3 PASOS TELEGRAM) */}
+        {showQRModal && (
+          <div className="qr-overlay fade-in" onClick={() => setShowQRModal(false)}>
+            <div className="qr-modal-card bounce-in telegram-modal" onClick={(e) => e.stopPropagation()}>
+              <button className="btn-close-qr" onClick={() => setShowQRModal(false)}>✕</button>
+              <h2 className="qr-title">{tr.payment?.title || 'Adquirir Licencia VIP'}</h2>
+              
+              <div className="telegram-steps-container">
+                <div className="telegram-step">
+                  <div className="telegram-step-header">
+                    <div className="telegram-step-number">1</div>
+                    <h4>{tr.payment?.step1 || 'Transfiere 6.99 EUR'}</h4>
+                  </div>
+                  <div className="qr-image-wrapper telegram-qr-wrapper">
+                    <img src="/qrxx.png" alt="Código QR @thrip" className="qr-image" 
+                      onError={(e) => e.target.src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://paypal.me/thrip/6.99EUR"} />
+                  </div>
+                </div>
+                <div className="telegram-step">
+                  <div className="telegram-step-header">
+                    <div className="telegram-step-number">2</div>
+                    <h4>{tr.payment?.step2 || 'Avisar al Administrador'}</h4>
+                  </div>
+                  <button className="btn-telegram-action" onClick={() => window.open('https://t.me/thriptv', '_blank')}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.198 2.027c-1.004-.326-2.008-.326-3.013 0L3.125 7.575C1.65 8.12 1.65 9.754 3.125 10.3l4.316 1.6v5.8c0 1.09.89 1.98 1.98 1.98h.02c1.09 0 1.98-.89 1.98-1.98v-3.513l5.093 3.395c.78.52 1.83.213 2.152-.64l3.528-11.64c.265-.873-.13-1.803-.996-2.068z"/></svg> 
+                    {tr.payment?.btnTelegram || 'Enviar Recibo por Telegram'}
+                  </button>
+                </div>
+                <div className="telegram-step">
+                  <div className="telegram-step-header">
+                    <div className="telegram-step-number">3</div>
+                    <h4>{tr.payment?.step3 || 'Código de 12 dígitos'}</h4>
+                  </div>
+                  <div className="telegram-input-group">
+                    <input 
+                      type="text" 
+                      placeholder={tr.payment?.codePlaceholder || 'Ej: THR-XXXX-XXXX'}
+                      value={activationCode}
+                      onChange={(e) => setActivationCode(e.target.value.toUpperCase())}
+                      maxLength={14}
+                    />
+                    <button className="btn-paypal btn-redeem" onClick={handleConfirmPayment} disabled={isVerifying || activationCode.length < 12}>
+                      <Key size={18} /> {isVerifying ? (tr.payment?.verifying || 'Validando...') : (tr.payment?.confirmPayment || 'Canjear')}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard-container fade-in">
       
@@ -602,7 +777,14 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
           {activeBottomNav === 'series' && <><Clapperboard className="icon-live" size={24} /> {tr.nav.series}</>}
           {activeBottomNav === 'settings' && <><Settings className="icon-live" size={24} /> {tr.nav.settings}</>}
         </div>
-        <RefreshCcw className="icon-refresh" size={22} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          {isFullscreen ? (
+            <Minimize className="icon-refresh desktop-only" size={22} onClick={toggleFullScreen} title="Salir de pantalla completa" />
+          ) : (
+            <Maximize className="icon-refresh desktop-only" size={22} onClick={toggleFullScreen} title="Pantalla completa" />
+          )}
+          <RefreshCcw className="icon-refresh" size={22} />
+        </div>
       </div>
 
       {/* SEARCH BAR */}
@@ -688,14 +870,14 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
               <div className="home-section" style={{ marginTop: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
                   <h3 className="section-title" style={{ fontSize: '24px', margin: 0, fontWeight: '700', color: 'white' }}>
-                    Partidos Destacados:
+                    {tr.home.todaysMatches}
                   </h3>
                 </div>
 
                 <div className="sports-agenda-board fade-in sports-desktop-scroll scroll-area" style={{ background: 'transparent', border: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '15px', overflowY: 'auto' }}>
                   {(!liveSchedule || liveSchedule.length === 0) ? (
                     <div style={{ textAlign: 'center', padding: '40px', color: '#888', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', width: '100%' }}>
-                      <p>No hay eventos premium programados para hoy.</p>
+                      <p>{tr.home.noEvents}</p>
                     </div>
                   ) : (
                     liveSchedule.map((match, idx) => {
@@ -715,6 +897,12 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                           }
                       } else {
                           showHora = timeStr;
+                      }
+                      
+                      if (showDia.toLowerCase() === 'hoy') {
+                        showDia = tr.common.today || 'Hoy';
+                      } else if (showDia.toLowerCase() === 'mañana') {
+                        showDia = tr.common.tomorrow || 'Mañana';
                       }
                       
                       return (
@@ -748,7 +936,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
 
                           <div className="match-action-col" style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', minWidth: '100px' }}>
                             <button className="premium-btn" onClick={(e) => { e.stopPropagation(); setSelectedMatchId(match.id); }} style={{ background: 'var(--primary-red)', padding: '8px 24px', fontSize: '13px', fontWeight: 'bold', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', boxShadow: '0 4px 10px rgba(217, 30, 24, 0.4)' }}>
-                                Ver
+                                {tr.home.watchMatch}
                             </button>
                           </div>
                         </div>
@@ -777,7 +965,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                 <div className="similar-movies-list scroll-area-x" ref={homeMoviesRef} style={{ scrollBehavior: 'smooth' }}>
                   {(() => {
                     // Tomamos los primeros elementos entregados por el proveedor (suelen ser las novedades / más vistas)
-                    return MOCK_MOVIES.slice(0, 10);
+                    return MOCK_MOVIES.slice(0, 20);
                   })().map((movie, idx) => {
                     const currentPoster = fixedPosters[movie.id] || movie.poster;
                     const isFetchingIMDB = activeSearchIMDB[movie.id];
@@ -870,7 +1058,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                 <div className="similar-movies-list scroll-area-x" ref={homeSeriesRef} style={{ scrollBehavior: 'smooth' }}>
                   {(() => {
                     // Tomamos los primeros elementos entregados por el proveedor (suelen ser las novedades / más vistas)
-                    return MOCK_SERIES.slice(0, 10);
+                    return MOCK_SERIES.slice(0, 20);
                   })().map((series, idx) => {
                     const currentPoster = fixedPosters[series.id] || series.poster;
                     const isFetchingIMDB = activeSearchIMDB[series.id];
@@ -1155,7 +1343,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                     <div className="movie-similar-section fade-in-up" style={{ marginTop: '50px', width: '100%', paddingBottom: '30px' }}>
                       <h3 style={{ color: '#fff', fontSize: '20px', marginBottom: '20px', fontWeight: 'bold' }}>Películas parecidas:</h3>
                       <div className="similar-movies-row scroll-area-x" style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '20px' }}>
-                        {MOCK_MOVIES.filter(m => m.groupId === movie.groupId && m.id !== movie.id).slice(0, 10).map(similar => (
+                        {MOCK_MOVIES.filter(m => m.groupId === movie.groupId && m.id !== movie.id).slice(0, 20).map(similar => (
                           <div key={similar.id} className="similar-movie-card" onClick={(e) => { e.stopPropagation(); setSelectedMovieId(similar.id); }} style={{ width: '140px', flexShrink: 0, cursor: 'pointer', transition: 'transform 0.2s' }}>
                             <img src={fixedPosters[similar.id] || similar.poster} alt={similar.title} style={{ width: '100%', height: '210px', objectFit: 'cover', borderRadius: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.5)' }} onError={(e) => { e.target.src = 'https://placehold.co/300x450/101010/FFF.png?text=Sin+Portada'; }} />
                             <p style={{ color: '#fff', fontSize: '13px', marginTop: '8px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: '600', textAlign: 'center', margin: 0 }}>
@@ -1383,19 +1571,15 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                         </select>
                       </div>
 
-                      <div className="episodes-list fade-in-up">
+                      <div className="episodes-list fade-in-up" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         {currentSeason.episodes.map(ep => (
-                          <div key={ep.id} className="episode-card" onClick={() => setPlayingMedia({ ...ep, parentTitle: series.title })}>
-                            <div className="episode-thumbnail-container">
-                              <img src={ep.image} alt={ep.title} className="episode-thumbnail" />
-                              <div className="episode-play-overlay">
-                                <Play fill="white" size={24} />
-                              </div>
+                          <div key={ep.id} className="episode-card-text-only" onClick={() => setPlayingMedia({ ...ep, parentTitle: series.title })}>
+                            <div className="episode-text-info">
+                              <h4 className="episode-text-title">{ep.epNumber}. {ep.title}</h4>
+                              <span className="episode-text-duration">{ep.duration || 'N/A'}</span>
                             </div>
-                            <div className="episode-info">
-                              <h4 className="episode-title">{ep.epNumber}. {ep.title}</h4>
-                              <p className="episode-synopsis">{ep.synopsis}</p>
-                              <span className="episode-duration">{ep.duration}</span>
+                            <div className="episode-text-action">
+                              <Play fill="white" size={16} />
                             </div>
                           </div>
                         ))}
@@ -1405,7 +1589,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                     <div className="movie-similar-section fade-in-up" style={{ marginTop: '50px', width: '100%', paddingBottom: '30px' }}>
                       <h3 style={{ color: '#fff', fontSize: '20px', marginBottom: '20px', fontWeight: 'bold' }}>Series parecidas:</h3>
                       <div className="similar-movies-row scroll-area-x" style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '20px' }}>
-                        {MOCK_SERIES.filter(s => s.groupId === series.groupId && s.id !== series.id).slice(0, 10).map(similar => (
+                        {MOCK_SERIES.filter(s => s.groupId === series.groupId && s.id !== series.id).slice(0, 20).map(similar => (
                           <div key={similar.id} className="similar-movie-card" onClick={(e) => { e.stopPropagation(); setSelectedSeriesId(similar.id); }} style={{ width: '140px', flexShrink: 0, cursor: 'pointer', transition: 'transform 0.2s' }}>
                             <img src={fixedPosters[similar.id] || similar.poster} alt={similar.title} style={{ width: '100%', height: '210px', objectFit: 'cover', borderRadius: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.5)' }} onError={(e) => { e.target.src = 'https://placehold.co/300x450/101010/FFF.png?text=Sin+Portada'; }} />
                             <p style={{ color: '#fff', fontSize: '13px', marginTop: '8px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: '600', textAlign: 'center', margin: 0 }}>
@@ -1428,7 +1612,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
           <div className="movies-container scroll-area">
 
 
-            <div className="genre-pills-container" style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '10px' }}>
+            <div className="genre-pills-container" style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '10px', marginBottom: '15px' }}>
               {[tr.common.all, tr.common.action, tr.common.drama, tr.common.comedy, tr.common.crime, tr.common.romance, tr.common.terror].map(genre => (
                 <button 
                   key={genre}
@@ -1494,11 +1678,9 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
               </div>
 
               {!isPremium ? (
-                <div className="payment-action-box fade-in">
-                  <div className="payment-price-tag">{tr.payment?.price || '7,00 €'}</div>
-                  
-                  <button className="btn-paypal" onClick={handlePayPalPayment} disabled={isVerifying}>
-                    <Globe size={20} /> {tr.payment?.payPayPal || 'Pagar con PayPal'}
+                <div className="payment-action-box fade-in" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px 0' }}>
+                  <button className="btn-play-movie" onClick={handlePayPalPayment} disabled={isVerifying} style={{ width: '100%', maxWidth: '300px', justifyContent: 'center', fontSize: '18px', padding: '16px', letterSpacing: '1px', borderRadius: '12px' }}>
+                    6,99 € 1 AÑO
                   </button>
                 </div>
               ) : (
@@ -1520,37 +1702,56 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
               </div>
 
               {/* CARD DE LA SUSCRIPCIÓN / LISTA ACTIVA */}
-              <div style={{ marginTop: '16px', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <h4 style={{ margin: '0 0 5px 0', fontSize: '15px', color: '#fff', textTransform: 'uppercase' }}>MI SUSCRIPCIÓN ACTIVA</h4>
-                    <p style={{ margin: 0, fontSize: '13px', color: '#aaa' }}>
-                      {localStorage.getItem('thriptv_xtUrl') ? (() => { try { return new URL(localStorage.getItem('thriptv_xtUrl')).hostname; } catch(e) { return localStorage.getItem('thriptv_xtUrl'); } })() : 'Archivo M3U Local'}
-                    </p>
-                    {playlistData?.account_info?.status && (
-                      <span style={{ display: 'inline-block', marginTop: '8px', padding: '3px 8px', borderRadius: '4px', background: 'rgba(46, 204, 113, 0.2)', color: '#2ecc71', fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase' }}>
-                        {playlistData.account_info.status}
-                      </span>
-                    )}
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <p style={{ margin: '0 0 5px 0', fontSize: '13px', color: '#fff' }}>
-                      <strong>Usuario:</strong> {localStorage.getItem('thriptv_xtUser') || 'Modo Archivo'}
-                    </p>
-                    {playlistData?.account_info?.exp_date && (
-                      <p style={{ margin: 0, fontSize: '12px', color: '#f1c40f' }}>
-                        Expira: {new Date(playlistData.account_info.exp_date * 1000).toLocaleDateString()}
-                      </p>
-                    )}
-                  </div>
-                </div>
+              <div style={{ marginTop: '16px', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
+                <h4 style={{ margin: '0 0 8px 0', fontSize: '16px', color: 'var(--primary-red, #e74c3c)', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '2px' }}>
+                  {tr.settings.activeList}
+                </h4>
+                <p style={{ margin: '0 0 8px 0', fontSize: '15px', color: '#fff' }}>
+                  {tr.settings.listUser} {localStorage.getItem('thriptv_xtUser') || 'Modo Archivo'}
+                </p>
+                {playlistData?.account_info?.exp_date && (
+                  <p style={{ margin: 0, fontSize: '13px', color: '#f1c40f' }}>
+                    {tr.settings.listExpires} {new Date(playlistData.account_info.exp_date * 1000).toLocaleDateString()}
+                  </p>
+                )}
               </div>
-
-              <div style={{ marginTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
-                <button className="btn-ghost-rounded" onClick={onLogout} style={{ color: '#ff4d4d', border: '1px solid #ff4d4d' }}>
-                  Desconectar Cuenta
+              
+              {/* BOTON GESTOR MULTI-LISTAS */}
+              <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+                <button className="btn-play-movie" onClick={() => setIsEditListOpen(!isEditListOpen)} style={{ width: '100%', maxWidth: '300px', justifyContent: 'center', fontSize: '15px', padding: '12px', letterSpacing: '1px', borderRadius: '12px' }}>
+                  {isEditListOpen ? tr.settings.closeManager : tr.settings.editLists}
                 </button>
               </div>
+
+              {isEditListOpen && (
+                <div style={{ marginTop: '16px', background: '#0a0a0a', border: '1px solid #1f1f1f', borderRadius: '12px', padding: '16px' }} className="fade-in-up">
+                   <h4 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#fff' }}>{tr.settings.savedLists}</h4>
+                   {savedLists.length === 0 && <p style={{ color: '#888', fontSize: '13px' }}>{tr.settings.noSavedLists}</p>}
+                   {savedLists.map((list, idx) => (
+                      <div key={idx} onClick={() => handleActivateList(list)} title={tr.common.action} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#111', padding: '8px 12px', borderRadius: '8px', marginBottom: '8px', border: '1px solid #222', cursor: 'pointer', transition: 'border 0.2s' }}>
+                         <div>
+                           <div style={{ fontWeight: 'bold', fontSize: '15px', color: '#fff' }}>{list.name}</div>
+                         </div>
+                         <button onClick={(e) => { e.stopPropagation(); handleDeleteList(list); }} style={{ background: 'transparent', border: '1px solid #ff4d4d', color: '#ff4d4d', padding: '6px 14px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
+                           {tr.settings.deleteList}
+                         </button>
+                      </div>
+                   ))}
+
+                   <div style={{ marginTop: '20px', borderTop: '1px solid #222', paddingTop: '16px' }}>
+                      <h4 style={{ margin: '0 0 15px 0', fontSize: '14px', color: '#aaa' }}>{tr.settings.addNewList}</h4>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <input type="text" placeholder={tr.settings.serverUrlPlaceholder2} value={newListUrl} onChange={(e) => setNewListUrl(e.target.value)} style={{ padding: '12px', background: '#111', border: '1px solid #222', color: '#fff', borderRadius: '6px', fontSize: '14px' }} />
+                        <input type="text" placeholder={tr.settings.usernamePlaceholder2} value={newListUser} onChange={(e) => setNewListUser(e.target.value)} style={{ padding: '12px', background: '#111', border: '1px solid #222', color: '#fff', borderRadius: '6px', fontSize: '14px' }} />
+                        <input type="password" placeholder={tr.settings.passwordPlaceholder2} value={newListPass} onChange={(e) => setNewListPass(e.target.value)} style={{ padding: '12px', background: '#111', border: '1px solid #222', color: '#fff', borderRadius: '6px', fontSize: '14px' }} />
+                        <button onClick={handleAddList} style={{ background: 'var(--primary-red)', border: 'none', color: '#fff', padding: '12px', borderRadius: '6px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', marginTop: '5px' }}>
+                          {tr.settings.saveList}
+                        </button>
+                      </div>
+                   </div>
+                </div>
+              )}
+
             </div>
 
             {/* SECCIÓN 3: Configuración IPTV */}
@@ -1585,8 +1786,6 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                 <label>{tr.settings.playerType}</label>
                 <select className="settings-select" defaultValue="auto">
                   <option value="auto">{tr.settings.playerAuto}</option>
-                  <option value="exo">{tr.settings.playerExo}</option>
-                  <option value="vlc">{tr.settings.playerVLC}</option>
                 </select>
               </div>
 
@@ -1617,20 +1816,16 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                 <select className="settings-select" value={appLanguage} onChange={(e) => setAppLanguage(e.target.value)}>
                   <option value="es">{tr.settings.langES}</option>
                   <option value="en">{tr.settings.langEN}</option>
+                  <option value="fr">{tr.settings.langFR}</option>
+                  <option value="de">{tr.settings.langDE}</option>
                 </select>
               </div>
             </div>
 
             {/* SECCIÓN 4: Acciones de Cuenta */}
-            <div className="settings-card account-actions-card">
-              <button className="btn-danger-solid" onClick={onLogout}>
-                <LogOut size={20} /> {tr.nav.logout}
-              </button>
-              <button className="btn-danger-outline" onClick={() => {
-                localStorage.removeItem('licenseStatus');
-                window.location.reload();
-              }}>
-                <Trash2 size={20} /> {tr.settings.deleteAccount}
+            <div className="settings-card account-actions-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px 0', background: 'transparent', border: 'none' }}>
+              <button className="btn-play-movie" onClick={onLogout} style={{ width: '100%', maxWidth: '300px', justifyContent: 'center', fontSize: '18px', padding: '16px', letterSpacing: '1px', borderRadius: '12px' }}>
+                <LogOut size={22} style={{ marginRight: '8px' }} /> {tr.nav.logout.toUpperCase()}
               </button>
             </div>
 
@@ -1643,22 +1838,22 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
       {/* BOTTOM NAVIGATION */}
       <div className="bottom-nav">
         <div className={`nav-item ${activeBottomNav === 'home' ? 'active' : ''}`} onClick={() => { setActiveBottomNav('home'); setSelectedMovieId(null); setSelectedSeriesId(null); setSelectedMatchId(null); }}>
-          <Home size={24} /><span>{tr.nav.home}</span>
+          <Home size={28} />
         </div>
         <div className={`nav-item ${activeBottomNav === 'live' ? 'active' : ''}`} onClick={() => { setActiveBottomNav('live'); setSelectedMovieId(null); setSelectedSeriesId(null); setSelectedMatchId(null); }}>
-          <Tv size={24} /><span>{tr.nav.live}</span>
+          <Tv size={28} />
         </div>
         <div className={`nav-item ${activeBottomNav === 'movies' ? 'active' : ''}`} onClick={() => { setActiveBottomNav('movies'); setActiveCategory('all'); setSelectedMovieId(null); setSelectedSeriesId(null); setActiveGenre('Todos'); setSelectedMatchId(null); }}>
-          <Film size={24} /><span>{tr.nav.movies}</span>
+          <Film size={28} />
         </div>
         <div className={`nav-item ${activeBottomNav === 'series' ? 'active' : ''}`} onClick={() => { setActiveBottomNav('series'); setActiveCategory('all'); setSelectedMovieId(null); setSelectedSeriesId(null); setSelectedMatchId(null); }}>
-          <Clapperboard size={24} /><span>{tr.nav.series}</span>
+          <Clapperboard size={28} />
         </div>
         <div className={`nav-item ${activeBottomNav === 'settings' ? 'active' : ''}`} onClick={() => { setActiveBottomNav('settings'); setSelectedMovieId(null); setSelectedSeriesId(null); setSelectedMatchId(null); }}>
-          <Settings size={24} /><span>{tr.nav.settings}</span>
+          <Settings size={28} />
         </div>
         <div className="nav-item" onClick={onLogout}>
-          <LogOut size={24} /><span>{tr.nav.logout}</span>
+          <LogOut size={28} />
         </div>
       </div>
 
@@ -1687,7 +1882,7 @@ const DashboardLayout = ({ onLogout, playlistData, appLanguage, setAppLanguage }
                   <h4>{tr.payment?.step1 || 'Transfiere 6.99 EUR'}</h4>
                 </div>
                 <div className="qr-image-wrapper telegram-qr-wrapper">
-                  <img src="/qrxx.png" alt="Código QR @thrip" className="qr-image" 
+                  <img src="/QR.png" alt="Código QR @thriptv" className="qr-image" 
                     onError={(e) => e.target.src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://paypal.me/thrip/6.99EUR"} />
                 </div>
               </div>

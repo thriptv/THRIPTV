@@ -2298,3 +2298,91 @@ input:checked + .slider:before {
   }
 }
 
+@media (max-width: 768px) { 
+  .desktop-only { display: none !important; } 
+
+  /* MOBILE LIVE CHANNELS TWEAKS */
+  .channel-logo-box {
+    display: none !important;
+  }
+  .channel-action .play-button-icon {
+    display: none !important;
+  }
+  .channel-card {
+    height: 48px !important;
+  }
+  .channel-info {
+    padding: 0 16px !important;
+  }
+  .channel-name {
+    font-size: 14px !important;
+  }
+  .channel-epg {
+    font-size: 10px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+  }
+}
+
+/* --- EPISODE CARD (TEXT ONLY) --- */
+.episode-card-text-only {
+  background: #111;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.episode-card-text-only:hover {
+  background: #161616;
+  border-color: var(--primary-red);
+  transform: translateX(5px);
+  box-shadow: -4px 4px 15px rgba(217, 30, 24, 0.1);
+}
+
+.episode-text-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.episode-text-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: normal;
+  color: #fff;
+  transition: color 0.2s;
+}
+
+.episode-card-text-only:hover .episode-text-title {
+  color: var(--primary-red);
+}
+
+.episode-text-duration {
+  font-size: 14px;
+  color: #888;
+}
+
+.episode-text-action {
+  background: var(--primary-red);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 10px rgba(217, 30, 24, 0.4);
+}
+
+.episode-card-text-only:hover .episode-text-action {
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(217, 30, 24, 0.6);
+}

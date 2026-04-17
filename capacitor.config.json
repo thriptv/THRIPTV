@@ -1,5 +1,14 @@
 {
   "appId": "com.thriptv.mobile",
   "appName": "THRIPTV",
-  "webDir": "dist"
+  "webDir": "dist",
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  },
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  }
 }

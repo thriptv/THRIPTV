@@ -4,6 +4,20 @@ export const fetchXtreamData = async (serverUrl, username, password) => {
   console.log('Interceptando Xtream Codes API vía Proxy Local:', baseUrl);
   
   const proxyFetch = async (action) => {
+    const actionParam = action ? `&action=${action}` : '';
+    const directUrl = `${baseUrl}/player_api.php?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}${actionParam}`;
+    
+    // 1. Intento Directo (Funciona nativamente en Electron y Capacitor/Android gracias al bypass de CORS)
+    try {
+      const resp = await fetch(directUrl);
+      if (resp.ok) {
+        return await resp.json();
+      }
+    } catch (e) {
+      console.log('Falló el fetch directo (posible CORS en navegador web), intentando proxy...', e);
+    }
+
+    // 2. Fallback Proxy (Útil solo para PWA / Navegadores donde existe Node backend activo)
     try {
       const response = await fetch('/api/proxy/xtream', {
         method: 'POST',
@@ -13,7 +27,7 @@ export const fetchXtreamData = async (serverUrl, username, password) => {
       if (!response.ok) throw new Error('Error en proxy fetch');
       return await response.json();
     } catch (e) {
-      console.warn('Fallo en petición:', action, e);
+      console.warn('Fallo en petición Xtream:', action, e);
       return [];
     }
   };

@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "electron": "electron .",
-    "build:win": "vite build && electron-builder --win"
+    "build:win": "vite build && npx electron-packager . THRIPTV --platform=win32 --arch=x64 --out=release --icon=public/Logo.ico --overwrite"
   },
   "build": {
     "appId": "com.thriptv.desktop",

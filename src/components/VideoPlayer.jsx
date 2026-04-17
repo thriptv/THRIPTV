@@ -21,7 +21,7 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
   const containerRef = useRef(null);
   const controlsTimeoutRef = useRef(null);
 
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState('00:00');
   const [duration, setDuration] = useState('00:00');
@@ -44,7 +44,9 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
 
     let hls;
 
-    if (Hls.isSupported() && media.url.includes('.m3u8')) {
+    const isDirectVideo = media.url.includes('.mp4') || media.url.includes('.mkv') || media.url.includes('.avi');
+
+    if (Hls.isSupported() && !isDirectVideo) {
       hls = new Hls({
         maxBufferLength: 30,
         maxMaxBufferLength: 60,
@@ -57,7 +59,10 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
             video.muted = true;
             setIsMuted(true);
             setVolume(0);
-            video.play().then(() => setIsPlaying(true)).catch(err => console.log(err));
+            video.play().then(() => setIsPlaying(true)).catch(err => {
+                console.log(err);
+                setIsPlaying(false);
+            });
         });
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl') || media.url.includes('.mp4') || media.url.includes('.mkv')) {
@@ -69,7 +74,10 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
             video.muted = true;
             setIsMuted(true);
             setVolume(0);
-            video.play().then(() => setIsPlaying(true)).catch(err => console.log(err));
+            video.play().then(() => setIsPlaying(true)).catch(err => {
+                console.log(err);
+                setIsPlaying(false);
+            });
         });
       });
     } else {
@@ -80,7 +88,10 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
             video.muted = true;
             setIsMuted(true);
             setVolume(0);
-            video.play().then(() => setIsPlaying(true)).catch(err => console.log(err));
+            video.play().then(() => setIsPlaying(true)).catch(err => {
+                console.log(err);
+                setIsPlaying(false);
+            });
       });
     }
 
@@ -112,13 +123,23 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
   const togglePlay = (e) => {
     if (e) e.stopPropagation();
     if (videoRef.current) {
+      if (videoRef.current.muted && isMuted) {
+         videoRef.current.muted = false;
+         setIsMuted(false);
+         setVolume(1);
+      }
+
       if (isPlaying) {
         videoRef.current.pause();
         setShowControls(true); // Mostrar controles siempre al posar
+        setIsPlaying(false);
       } else {
-        videoRef.current.play();
+        setIsPlaying(true);
+        videoRef.current.play().catch(err => {
+            console.log("Play failed manually:", err);
+            setIsPlaying(false);
+        });
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -205,7 +226,12 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={() => setIsPlaying(false)}
+        onPause={() => setIsPlaying(false)}
+        onPlay={() => setIsPlaying(true)}
         onClick={togglePlay}
+        playsInline
+        webkit-playsinline="true"
+        autoPlay
       >
         <track kind="captions" />
       </video>
