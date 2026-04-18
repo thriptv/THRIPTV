@@ -62,44 +62,30 @@
   flex: 1;
   position: relative;
   display: flex;
+  overflow: hidden; /* Fija el contenedor a su espacio flex */
+  min-height: 0;
 }
 
-/* DRAWER (SIDEBAR) */
+/* DRAWER (SIDEBAR) FIXED */
 .drawer {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   height: 100%;
-  width: 300px;
+  width: 260px;
   background-color: #0d0d0d;
   border-right: 1px solid #1f1f1f;
-  transform: translateX(-100%);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 20;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 .drawer.open {
-  transform: translateX(0);
+  transform: none;
 }
 
 /* RED TOGGLE TAB */
 .drawer-toggle {
-  position: absolute;
-  top: 50%;
-  right: -24px;
-  transform: translateY(-50%);
-  width: 24px;
-  height: 80px;
-  background-color: var(--primary-red);
-  border-radius: 0 12px 12px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 2px 0 10px rgba(217, 30, 24, 0.5);
-  transition: right 0.3s ease;
+  display: none;
 }
 
 .drawer-toggle .toggle-icon {
@@ -127,13 +113,13 @@
 }
 
 .menu-item.active {
-  background: linear-gradient(90deg, #2a0b0b 0%, #150505 100%);
-  border-left: 2px solid var(--primary-red);
+  background: linear-gradient(90deg, rgba(241, 196, 15, 0.15) 0%, transparent 100%);
+  border-left: 2px solid #f1c40f;
 }
 
 .menu-item.active .menu-label,
 .menu-item.active .menu-arrow {
-  color: var(--primary-red);
+  color: #f1c40f;
 }
 
 .menu-icon {
@@ -142,7 +128,7 @@
 }
 
 .menu-item.active .menu-icon {
-  color: var(--primary-red);
+  color: #f1c40f;
 }
 
 .menu-label {
@@ -522,14 +508,13 @@
 
 /* --- VISTA DE DETALLES DE PELÍCULA --- */
 .movie-detail-view {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+  position: relative;
+  flex: 1;
   height: 100%;
   z-index: 100;
   background-color: var(--bg-color);
   animation: fadeIn 0.4s ease forwards;
+  overflow: hidden;
 }
 
 .movie-detail-wrapper {
@@ -1893,11 +1878,11 @@ input:checked + .slider:before {
 }
 
 .btn-redeem {
-  background: #e74c3c;
+  background: #ff0000;
 }
 .btn-redeem:hover:not(:disabled) {
-  background: #c0392b;
-  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+  background: #cc0000;
+  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.6);
 }
 
 /* SPORTS TIMELINE BOARD (GLASSMORPHISM) */
@@ -2257,7 +2242,7 @@ input:checked + .slider:before {
     overflow-y: hidden !important;
     scroll-snap-type: x mandatory;
     gap: 15px !important;
-    padding-bottom: 20px !important;
+    padding-bottom: 0px !important;
     scrollbar-width: none;
     -ms-overflow-style: none;
     max-height: none !important;
@@ -2276,25 +2261,80 @@ input:checked + .slider:before {
     flex-shrink: 0 !important;
   }
   .match-info-fluid {
-    flex-direction: column !important;
-    align-items: flex-start !important;
+    display: grid !important;
+    grid-template-columns: auto auto 1fr !important;
+    grid-template-areas: 
+      "time date tournament"
+      "teams teams teams" !important;
     gap: 10px !important;
     width: 100% !important;
+    align-items: center !important;
   }
   .match-time-col, .match-day-col, .match-tournament-col, .match-teams-col {
-    border-right: none !important;
-    border-left: none !important;
-    padding-right: 0 !important;
-    padding-left: 0 !important;
-    margin-right: 0 !important;
-    margin-left: 0 !important;
-    width: 100% !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-width: 0 !important;
+  }
+  .match-time-col {
+    grid-area: time !important;
     justify-content: flex-start !important;
+  }
+  .match-time-main {
+    color: var(--primary-red) !important;
+    font-size: 20px !important;
+    line-height: 20px !important;
+  }
+  .match-day-col {
+    grid-area: date !important;
+    justify-content: flex-start !important;
+  }
+  .match-day-col .match-time-sub {
+    font-size: 20px !important;
+    font-weight: 900 !important;
+    line-height: 20px !important;
+  }
+  .match-tournament-col {
+    grid-area: tournament !important;
+    justify-content: flex-end !important;
+    padding-right: 25px !important;
+  }
+  .match-tournament-col .match-time-sub.tournament-name {
+    color: #f1c40f !important;
+  }
+  .match-teams-col {
+    grid-area: teams !important;
+    justify-content: center !important;
+    text-align: center !important;
+    border: none !important;
+    padding-left: 0 !important;
+    padding-right: 25px !important;
+    width: 100% !important;
+    margin-top: 8px !important;
+  }
+  .match-teams-col span {
+    font-size: 16px !important;
+    white-space: normal !important;
   }
   .match-action-col {
     width: 100% !important;
     justify-content: flex-start !important;
-    margin-top: 10px !important;
+    padding-left: 0 !important;
+    padding-right: 25px !important;
+    margin-top: 5px !important;
+  }
+  .match-action-col .premium-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 8px 20px !important;
+    font-size: 13px !important;
+    background: var(--primary-red) !important;
+    border: none !important;
+    box-shadow: 0 2px 5px rgba(217, 30, 24, 0.4) !important;
+    color: white !important;
+    text-align: center !important;
+    border-radius: 6px !important;
   }
 }
 
@@ -2385,4 +2425,37 @@ input:checked + .slider:before {
 .episode-card-text-only:hover .episode-text-action {
   transform: scale(1.1);
   box-shadow: 0 4px 15px rgba(217, 30, 24, 0.6);
+}
+
+/* COMPORTAMIENTO MÓVIL PARA EL MENÚ LATERAL */
+@media (max-width: 768px) {
+  .drawer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 280px;
+    z-index: 999999;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .drawer.open {
+    transform: translateX(0);
+  }
+
+  .drawer-toggle {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    right: -24px;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 80px;
+    background-color: var(--primary-red);
+    border-radius: 0 12px 12px 0;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 2px 0 10px rgba(217, 30, 24, 0.5);
+  }
 }

@@ -122,9 +122,8 @@ const LoginScreen = ({ onLogin, appLanguage }) => {
           <img src="./Logo.png" alt="THRIPTV Logo" className="logo-image" style={{ objectFit: 'contain' }} />
         </div>
         <h1 className="brand-text">
-          THR<span>IPTV</span>
+          THR<span>IPTW</span>
         </h1>
-        <p className="subtitle">{t.selectMode}</p>
       </div>
 
       {/* TARJETA DEL FORMULARIO */}
@@ -140,7 +139,7 @@ const LoginScreen = ({ onLogin, appLanguage }) => {
               <User className="input-icon" size={20} />
               <input 
                 type="text" 
-                className="input-field" 
+                className="input-field focusable" 
                 placeholder={t.usernamePlaceholder} 
                 value={xtUser}
                 onChange={(e) => setXtUser(e.target.value)}
@@ -154,13 +153,13 @@ const LoginScreen = ({ onLogin, appLanguage }) => {
               <Lock className="input-icon" size={20} />
               <input 
                 type={showPassword ? "text" : "password"} 
-                className="input-field" 
+                className="input-field focusable" 
                 placeholder={t.passwordPlaceholder} 
                 value={xtPass}
                 onChange={(e) => setXtPass(e.target.value)}
               />
               <button 
-                className="password-toggle"
+                className="password-toggle focusable"
                 onClick={() => setShowPassword(!showPassword)}
                 type="button"
               >
@@ -175,7 +174,7 @@ const LoginScreen = ({ onLogin, appLanguage }) => {
               <Globe className="input-icon" size={20} />
               <input 
                 type="text" 
-                className="input-field" 
+                className="input-field focusable" 
                 placeholder={t.serverUrlPlaceholder} 
                 value={xtUrl}
                 onChange={(e) => setXtUrl(e.target.value)}
@@ -188,7 +187,7 @@ const LoginScreen = ({ onLogin, appLanguage }) => {
         {errorMsg && <div style={{ color: '#ff4d4d', marginTop: '12px', fontSize: '14px', textAlign: 'center' }}>{errorMsg}</div>}
 
         {/* BOTÓN CONECTAR */}
-        <button className="submit-btn" type="button" onClick={handleUrlLogin} disabled={isLoading} style={{ opacity: isLoading ? 0.7 : 1 }}>
+        <button className="submit-btn focusable" type="button" onClick={handleUrlLogin} disabled={isLoading} style={{ opacity: isLoading ? 0.7 : 1 }}>
           <LogIn className="submit-icon" size={20} />
           {isLoading ? t.btnDecoding : t.btnConnect}
         </button>

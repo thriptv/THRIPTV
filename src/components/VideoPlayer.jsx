@@ -241,7 +241,7 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
         
         {/* HEADER */}
         <div className="player-header fade-element">
-          <button className="btn-player-back" onClick={onClose}>
+          <button className="btn-player-back focusable" onClick={onClose}>
             <ArrowLeft size={28} />
           </button>
           <div className="player-title-info">
@@ -250,7 +250,7 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
         </div>
 
         {/* CUBIERTA CENTRAL DE PLAY/PAUSE AL HACER CLIC */}
-        <div className="center-play-pause fade-element" onClick={togglePlay}>
+        <div className="center-play-pause fade-element focusable" onClick={togglePlay}>
            {!isPlaying && (
              <div className="big-play-btn">
                <Play size={48} fill="currentColor" />
@@ -271,7 +271,7 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
                 {audioTracks.map(audio => (
                   <div 
                     key={audio} 
-                    className={`menu-option ${selectedAudio === audio ? 'selected' : ''}`}
+                    className={`menu-option focusable ${selectedAudio === audio ? 'selected' : ''}`}
                     onClick={() => { setSelectedAudio(audio); setActiveMenu(null); }}
                   >
                     {audio}
@@ -289,7 +289,7 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
                 {subtitleTracks.map(sub => (
                   <div 
                     key={sub} 
-                    className={`menu-option ${selectedSubtitle === sub ? 'selected' : ''}`}
+                    className={`menu-option focusable ${selectedSubtitle === sub ? 'selected' : ''}`}
                     onClick={() => { setSelectedSubtitle(sub); setActiveMenu(null); }}
                   >
                     {sub}
@@ -303,7 +303,7 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
         {/* BOTTOM CONTROLS */}
         <div className="player-bottom fade-element" onClick={(e) => e.stopPropagation()}>
           
-          <div className="progress-bar-container" onClick={handleProgressClick}>
+          <div className="progress-bar-container focusable" onClick={handleProgressClick}>
             <div className="progress-bar-bg">
               <div className="progress-bar-fill" style={{ width: `${progress}%` }}></div>
               <div className="progress-bar-thumb" style={{ left: `${progress}%` }}></div>
@@ -314,28 +314,28 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
             
             <div className="controls-left">
               {onPrev && (
-                <button className="player-icon-btn" onClick={onPrev} title="Anterior">
+                <button className="player-icon-btn focusable" onClick={onPrev} title="Anterior">
                   <SkipBack size={24} fill="currentColor" />
                 </button>
               )}
               
-              <button className="player-icon-btn" onClick={togglePlay}>
+              <button className="player-icon-btn focusable" onClick={togglePlay}>
                 {isPlaying ? <Pause size={28} fill="currentColor" /> : <Play size={28} fill="currentColor" />}
               </button>
               
               {onNext && (
-                <button className="player-icon-btn" onClick={onNext} title="Siguiente">
+                <button className="player-icon-btn focusable" onClick={onNext} title="Siguiente">
                   <SkipForward size={24} fill="currentColor" />
                 </button>
               )}
               
               <div className="volume-container">
-                <button className="player-icon-btn" onClick={toggleMute}>
+                <button className="player-icon-btn focusable" onClick={toggleMute}>
                   {isMuted || volume === 0 ? <VolumeX size={24} /> : <Volume2 size={24} />}
                 </button>
                 <input 
                   type="range" 
-                  className="volume-slider" 
+                  className="volume-slider focusable" 
                   min="0" 
                   max="1" 
                   step="0.05" 
@@ -351,7 +351,7 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
 
             <div className="controls-right">
               <button 
-                className="player-icon-btn" 
+                className="player-icon-btn focusable" 
                 onClick={(e) => { 
                   e.stopPropagation(); 
                   setActiveMenu(activeMenu ? null : 'settings');
@@ -361,7 +361,7 @@ const VideoPlayer = ({ media, onClose, onNext, onPrev }) => {
                 <Settings size={24} />
               </button>
 
-              <button className="player-icon-btn" onClick={toggleFullscreen}>
+              <button className="player-icon-btn focusable" onClick={toggleFullscreen}>
                 {isFullscreen ? <Minimize size={24} /> : <Maximize size={24} />}
               </button>
             </div>

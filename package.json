@@ -25,7 +25,7 @@
         "nsis",
         "portable"
       ],
-      "icon": "public/Logo.png"
+      "icon": "public/Logo.ico"
     },
     "files": [
       "dist/**/*",
@@ -46,9 +46,11 @@
     "iptv-playlist-parser": "^0.15.2",
     "lucide-react": "^1.8.0",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "spatial-navigation-js": "^1.0.0"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.3.1",
     "@eslint/js": "^9.39.4",
     "@types/react": "^19.2.14",

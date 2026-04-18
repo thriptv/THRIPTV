@@ -15,7 +15,7 @@ function createWindow() {
       webSecurity: false // Necessary for IPTV m3u streams that lack correct CORS inside Electron
     },
     autoHideMenuBar: true,
-    icon: path.join(__dirname, '../public/Logo.png')
+    icon: path.join(__dirname, '../public/Logo.ico')
   });
 
   if (isDev) {
